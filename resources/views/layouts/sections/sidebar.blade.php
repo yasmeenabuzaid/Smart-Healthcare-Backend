@@ -1,6 +1,6 @@
 <aside id="layout-menu" class="layout-menu menu-vertical menu bg-menu-theme">
     <div class="app-brand demo">
-        <a href="{{ url('/') }}" class="app-brand-link">
+        <a href="{{ url('/admin') }}" class="app-brand-link">
             <span class="app-brand-logo demo">
                 <svg width="25" viewBox="0 0 25 42" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
                     <defs>
@@ -35,39 +35,66 @@
     <div class="menu-inner-shadow"></div>
 
     <ul class="menu-inner py-1">
-        <li class="menu-item active">
-            <a href="{{ url('/') }}" class="menu-link">
+        <li class="menu-item {{ request()->is('admin') ? 'active' : '' }}">
+            <a href="{{ url('/admin') }}" class="menu-link">
                 <i class="menu-icon tf-icons bx bx-home-circle"></i>
-                <div data-i18n="Analytics">الرئيسية</div>
+                <div data-i18n="Analytics">الرئيسية (التحليلات)</div>
             </a>
         </li>
 
         <li class="menu-header small text-uppercase">
             <span class="menu-header-text">إدارة النظام</span>
         </li>
-        <li class="menu-item">
+
+        <li class="menu-item {{ request()->routeIs('admin.users.*') ? 'active' : '' }}">
+            <a href="#" class="menu-link"> <i class="menu-icon tf-icons bx bx-group"></i>
+                <div data-i18n="Users">إدارة المستخدمين</div>
+            </a>
+        </li>
+
+        <li class="menu-item {{ request()->routeIs('admin.hospitals.*') || request()->routeIs('admin.approvals.*') ? 'active open' : '' }}">
             <a href="javascript:void(0);" class="menu-link menu-toggle">
                 <i class="menu-icon tf-icons bx bx-building-house"></i>
                 <div data-i18n="Hospitals">المستشفيات</div>
             </a>
             <ul class="menu-sub">
-                <li class="menu-item">
-                    <a href="#" class="menu-link">
+                <li class="menu-item {{ request()->routeIs('admin.hospitals.index') ? 'active' : '' }}">
+                    <a href="{{ route('admin.hospitals.index') }}" class="menu-link">
                         <div data-i18n="Approved">المستشفيات المعتمدة</div>
                     </a>
                 </li>
-                <li class="menu-item">
-                    <a href="#" class="menu-link">
+                <li class="menu-item {{ request()->routeIs('admin.approvals.index') ? 'active' : '' }}">
+                    <a href="{{ route('admin.approvals.index') }}" class="menu-link">
                         <div data-i18n="Pending Requests">طلبات الانضمام</div>
-                        <div class="badge bg-danger rounded-pill ms-auto">5</div>
+                        <div class="badge bg-danger rounded-pill ms-auto">جديد</div>
                     </a>
                 </li>
             </ul>
         </li>
 
+        <li class="menu-item {{ request()->routeIs('admin.employees.*') ? 'active' : '' }}">
+            <a href="{{ route('admin.employees.index') }}" class="menu-link">
+                <i class="menu-icon tf-icons bx bx-id-card"></i>
+                <div data-i18n="Employees">إدارة الموظفين</div>
+            </a>
+        </li>
+
+        <li class="menu-item {{ request()->routeIs('admin.insurance.*') ? 'active' : '' }}">
+            <a href="{{ route('admin.insurance.index') }}" class="menu-link"> <i class="menu-icon tf-icons bx bx-shield-plus"></i>
+                <div data-i18n="Insurance">طلبات التأمين</div>
+            </a>
+        </li>
+
+        <li class="menu-item {{ request()->routeIs('admin.complaints.*') ? 'active' : '' }}">
+            <a href="#" class="menu-link"> <i class="menu-icon tf-icons bx bx-support"></i>
+                <div data-i18n="Complaints">الشكاوى والاقتراحات</div>
+            </a>
+        </li>
+
         <li class="menu-header small text-uppercase">
             <span class="menu-header-text">الحساب</span>
         </li>
+
         <li class="menu-item">
             <a href="#" class="menu-link">
                 <i class="menu-icon tf-icons bx bx-user"></i>
