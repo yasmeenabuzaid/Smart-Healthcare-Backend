@@ -1,53 +1,71 @@
 @extends('layouts.admin')
 
 @section('content')
+    <div class="d-flex justify-content-between align-items-center flex-wrap grid-margin">
+        <div>
+            <h4 class="mb-3 mb-md-0">{{ __('Welcome to Smart Healthcare System! 🎉') }}</h4>
+        </div>
+    </div>
+
     <div class="row">
-        <div class="col-lg-8 mb-4 order-0">
-            <div class="card">
-                <div class="d-flex align-items-end row">
-                    <div class="col-sm-7">
-                        <div class="card-body">
-                            <h5 class="card-title text-primary">أهلاً بك في نظام الرعاية الذكية! 🎉</h5>
-                            <p class="mb-4">
-                                لديك <span class="fw-bold">5</span> طلبات انضمام جديدة من مستشفيات مختلفة بانتظار المراجعة والموافقة.
-                            </p>
-                            <a href="#" class="btn btn-sm btn-outline-primary">عرض الطلبات المعلقة</a>
-                        </div>
+        <div class="col-12 col-xl-12 stretch-card grid-margin">
+            <div class="card bg-primary text-white">
+                <div class="card-body d-flex flex-column flex-md-row align-items-center justify-content-between">
+                    <div>
+                        <h5 class="mb-2">{{ __('You have') }} <span class="fw-bolder fs-4">5</span> {{ __('new join requests waiting for review.') }}</h5>
+                        <p class="text-white-50 mb-0">{{ __('Review and approve hospitals to expand your network.') }}</p>
                     </div>
-                    <div class="col-sm-5 text-center text-sm-left">
-                        <div class="card-body pb-0 px-0 px-md-4">
-                            <img src="{{ asset('assets/img/illustrations/man-with-laptop-light.png') }}" height="140" alt="View Badge User" data-app-dark-img="illustrations/man-with-laptop-dark.png" data-app-light-img="illustrations/man-with-laptop-light.png" />
+                    <div class="mt-3 mt-md-0">
+                        <a href="{{ route('admin.approvals.index') }}" class="btn btn-light fw-bolder">{{ __('View Pending Requests') }}</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-6 col-xl-4 stretch-card grid-margin">
+            <div class="card">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-baseline mb-2">
+                        <h6 class="card-title mb-0">{{ __('Approved Hospitals') }}</h6>
+                    </div>
+                    <div class="row">
+                        <div class="col-6 col-md-12 col-xl-5">
+                            <h3 class="mb-2">12</h3>
+                            <div class="d-flex align-items-baseline">
+                                <p class="text-success">
+                                    <span>+3.3%</span>
+                                    <i data-feather="arrow-up" class="icon-sm mb-1"></i>
+                                </p>
+                            </div>
+                        </div>
+                        <div class="col-6 col-md-12 col-xl-7 d-flex justify-content-end align-items-center">
+                            <i data-feather="activity" class="text-primary" style="width: 40px; height: 40px;"></i>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
 
-        <div class="col-lg-4 col-md-4 order-1">
-            <div class="row">
-                <div class="col-lg-6 col-md-12 col-6 mb-4">
-                    <div class="card">
-                        <div class="card-body">
-                            <div class="card-title d-flex align-items-start justify-content-between">
-                                <div class="avatar shrink-0">
-                                    <img src="{{ asset('assets/img/icons/unicons/chart-success.png') }}" alt="chart success" class="rounded" />
-                                </div>
-                            </div>
-                            <span class="fw-semibold d-block mb-1">المستشفيات المعتمدة</span>
-                            <h3 class="card-title mb-2">12</h3>
-                        </div>
+        <div class="col-md-6 col-xl-4 stretch-card grid-margin">
+            <div class="card">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-baseline mb-2">
+                        <h6 class="card-title mb-0">{{ __('Rejected Requests') }}</h6>
                     </div>
-                </div>
-                <div class="col-lg-6 col-md-12 col-6 mb-4">
-                    <div class="card">
-                        <div class="card-body">
-                            <div class="card-title d-flex align-items-start justify-content-between">
-                                <div class="avatar shrink-0">
-                                    <img src="{{ asset('assets/img/icons/unicons/wallet-info.png') }}" alt="Credit Card" class="rounded" />
-                                </div>
+                    <div class="row">
+                        <div class="col-6 col-md-12 col-xl-5">
+                            <h3 class="mb-2">3</h3>
+                            <div class="d-flex align-items-baseline">
+                                <p class="text-danger">
+                                    <span>-2.8%</span>
+                                    <i data-feather="arrow-down" class="icon-sm mb-1"></i>
+                                </p>
                             </div>
-                            <span>الطلبات المرفوضة</span>
-                            <h3 class="card-title text-nowrap mb-1">3</h3>
+                        </div>
+                        <div class="col-6 col-md-12 col-xl-7 d-flex justify-content-end align-items-center">
+                            <i data-feather="x-circle" class="text-danger" style="width: 40px; height: 40px;"></i>
                         </div>
                     </div>
                 </div>

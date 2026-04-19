@@ -45,3 +45,9 @@ Route::prefix('admin/employees')->name('admin.employees.')->group(function () {
 Route::get('/', function () {
     return view('dashboard');
 });
+Route::get('/lang/{locale}', function ($locale) {
+    if (in_array($locale, ['ar', 'en'])) {
+        session()->put('locale', $locale);
+    }
+    return redirect()->back();
+})->name('lang.switch');
