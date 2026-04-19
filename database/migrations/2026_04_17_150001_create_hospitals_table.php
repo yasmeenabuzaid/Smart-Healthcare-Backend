@@ -20,13 +20,11 @@ return new class extends Migration
         $table->text('description')->nullable();
         $table->string('logo')->nullable(); // مسار الشعار
 
-        // 2. معلومات التواصل
         $table->string('phone');
-        $table->string('emergency_phone')->nullable(); // رقم الطوارئ المستقل
-        $table->string('email')->unique();
+        $table->string('emergency_phone')->nullable(); 
+        $table->string('email')->unique()->nullable();
         $table->string('website')->nullable();
 
-        // 3. الموقع الجغرافي (مهم جداً لتطبيقات الخرائط وحساب المسافات)
         $table->string('governorate')->nullable(); // المحافظة
         $table->text('address');
         $table->decimal('latitude', 10, 8)->nullable(); // إحداثيات الخريطة

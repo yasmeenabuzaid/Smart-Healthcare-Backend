@@ -16,6 +16,7 @@ use App\Http\Controllers\Admin\EmployeeController;
 use App\Http\Controllers\Admin\HospitalRequestController;
 use App\Http\Controllers\Admin\HospitalController;
 use App\Http\Controllers\Admin\InsuranceController;
+use App\Http\Controllers\Admin\Auth\LoginController;
 
 Route::prefix('admin/insurance')->name('admin.insurance.')->group(function () {
     Route::get('/', [InsuranceController::class, 'index'])->name('index');
@@ -42,6 +43,15 @@ Route::prefix('admin/employees')->name('admin.employees.')->group(function () {
     Route::post('/store', [EmployeeController::class, 'store'])->name('store');
     Route::delete('/{employee}', [EmployeeController::class, 'destroy'])->name('destroy');
 });
-Route::get('/', function () {
-    return view('dashboard');
+Route::prefix('admin/auth')->name('admin.auth.')->group(function () {
+    Route::post('/register', [LoginController::class, 'register'])->name('register');
+    Route::post('/login', [LoginController::class, 'login'])->name('login');
+    Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
 });
+Route::get('/', function () {
+    return view('welcome');
+}); 
+Route::get('/dashboard', function () {
+    return view('dashboard');
+})->name('dashboard');
+

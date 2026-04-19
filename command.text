@@ -1,0 +1,38 @@
+  General & Setup
+php artisan serve → Start local development server
+
+ Database & Migrations
+php artisan migrate → Run database migrations
+php artisan migrate:rollback → Rollback last migration batch
+php artisan migrate:fresh → Drop all tables and re-run migrations
+php artisan migrate:fresh --seed → Refresh DB and seed data
+php artisan db:seed → Run database seeders
+
+ Make Commands (Code Generation)
+php artisan make:controller NameController → Create a controller
+php artisan make:controller NameController --api → Create API controller (CRUD methods only)
+php artisan make:model Name → Create a model
+php artisan make:model Name -mcr → Create model + migration + controller + resource
+php artisan make:request NameRequest → Create form request (validation layer)
+php artisan make:middleware NameMiddleware → Create middleware
+php artisan make:seeder NameSeeder → Create database seeder
+
+ Routing
+php artisan route:list → Show all registered routes
+php artisan route:clear → Clear route cache
+php artisan route:cache → Cache routes for performance
+
+
+ Clearing & Caching
+php artisan optimize:clear → Clear all caches (config, route, view, etc.)
+php artisan config:clear → Clear configuration cache
+php artisan cache:clear → Clear application cache
+php artisan view:clear → Clear compiled Blade views
+
+
+
+بدنا هاد الباكيج
+composer require spatie/laravel-activitylog
+
+
+//php artisan db:seed --class=AdminUserSeeder
