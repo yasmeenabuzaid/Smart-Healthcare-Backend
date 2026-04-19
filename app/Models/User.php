@@ -17,11 +17,13 @@ class User extends Authenticatable
      *
      * @var array<int, string>
      */
-    protected $fillable = [
-        'name',
-        'email',
-        'password',
-    ];
+  protected $fillable = [
+    'name',
+    'password',
+    'phone_number',
+    'national_number',
+    'email', 
+];
 
     /**
      * The attributes that should be hidden for serialization.
@@ -41,4 +43,12 @@ class User extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
+
+
+    // because we have a one-to-many relationship between users and employee details
+    // shift in another hospital, or even work in multiple hospitals at the same time
+    public function details()
+{
+    return $this->hasMany(EmployeeDetail::class);
+}
 }
