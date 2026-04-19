@@ -1,66 +1,64 @@
-<nav class="layout-navbar container-xxl navbar navbar-expand-xl navbar-detached align-items-center bg-navbar-theme" id="layout-navbar">
-    <div class="layout-menu-toggle navbar-nav align-items-xl-center me-3 me-xl-0 d-xl-none">
-        <a class="nav-item nav-link px-0 me-xl-4" href="javascript:void(0)">
-            <i class="bx bx-menu bx-sm"></i>
-        </a>
-    </div>
-
-    <div class="navbar-nav-right d-flex align-items-center" id="navbar-collapse">
-        <div class="navbar-nav align-items-center">
-            <div class="nav-item d-flex align-items-center">
-                <i class="bx bx-search fs-4 lh-0"></i>
-                <input type="text" class="form-control border-0 shadow-none" placeholder="ابحث هنا..." aria-label="Search..." />
+<nav class="navbar">
+    <a href="#" class="sidebar-toggler">
+        <i data-feather="menu"></i>
+    </a>
+    <div class="navbar-content">
+        <form class="search-form">
+            <div class="input-group">
+                <div class="input-group-text">
+                    <i data-feather="search"></i>
+                </div>
+                <input type="text" class="form-control" id="navbarForm" placeholder="{{ __('Search...') }}">
             </div>
-        </div>
-        <ul class="navbar-nav flex-row align-items-center ms-auto">
-            <li class="nav-item navbar-dropdown dropdown-user dropdown">
-                <a class="nav-link dropdown-toggle hide-arrow" href="javascript:void(0);" data-bs-toggle="dropdown">
-                    <div class="avatar avatar-online">
-                        <img src="{{ asset('assets/img/avatars/1.png') }}" alt class="w-px-40 h-auto rounded-circle" />
-                    </div>
+        </form>
+
+        <ul class="navbar-nav">
+            <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" href="#" id="languageDropdown" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    <i class="flag-icon flag-icon-{{ app()->getLocale() == 'ar' ? 'jo' : 'us' }} mt-1" title="{{ app()->getLocale() == 'ar' ? 'عربي' : 'English' }}"></i> <span class="ms-1 me-1 d-none d-md-inline-block">{{ app()->getLocale() == 'ar' ? 'عربي' : 'English' }}</span>
                 </a>
-                <ul class="dropdown-menu dropdown-menu-end">
-                    <li>
-                        <a class="dropdown-item" href="#">
-                            <div class="d-flex">
-                                <div class="shrink-0 me-3">
-                                    <div class="avatar avatar-online">
-                                        <img src="{{ asset('assets/img/avatars/1.png') }}" alt class="w-px-40 h-auto rounded-circle" />
-                                    </div>
-                                </div>
-                                <div class="grow">
-                                    <span class="fw-semibold d-block">مدير النظام</span>
-                                    <small class="text-muted">Admin</small>
-                                </div>
-                            </div>
-                        </a>
-                    </li>
-                    <li>
-                        <div class="dropdown-divider"></div>
-                    </li>
-                    <li>
-                        <a class="dropdown-item" href="#">
-                            <i class="bx bx-user me-2"></i>
-                            <span class="align-middle">ملفي الشخصي</span>
-                        </a>
-                    </li>
-                    <li>
-                        <a class="dropdown-item" href="#">
-                            <i class="bx bx-cog me-2"></i>
-                            <span class="align-middle">الإعدادات</span>
-                        </a>
-                    </li>
-                    <li>
-                        <div class="dropdown-divider"></div>
-                    </li>
-                    <li>
-                        <a class="dropdown-item" href="#">
-                            <i class="bx bx-power-off me-2 text-danger"></i>
-                            <span class="align-middle text-danger">تسجيل خروج</span>
-                        </a>
-                    </li>
-                </ul>
+                <div class="dropdown-menu" aria-labelledby="languageDropdown">
+                    <a href="{{ route('lang.switch', 'en') }}" class="dropdown-item py-2"><i class="flag-icon flag-icon-us" title="us" id="us"></i> <span class="ms-1"> English </span></a>
+                    <a href="{{ route('lang.switch', 'ar') }}" class="dropdown-item py-2"><i class="flag-icon flag-icon-jo" title="jo" id="jo"></i> <span class="ms-1"> عربي </span></a>
+                </div>
             </li>
-            </ul>
+
+            <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" href="#" id="profileDropdown" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    <img class="wd-30 ht-30 rounded-circle" src="{{ asset('assets/images/faces/face1.jpg') }}" alt="profile">
+                </a>
+                <div class="dropdown-menu p-0" aria-labelledby="profileDropdown">
+                    <div class="d-flex flex-column align-items-center border-bottom px-5 py-3">
+                        <div class="mb-3">
+                            <img class="wd-80 ht-80 rounded-circle" src="{{ asset('assets/images/faces/face1.jpg') }}" alt="">
+                        </div>
+                        <div class="text-center">
+                            <p class="tx-16 fw-bolder">{{ __('System Admin') }}</p>
+                            <p class="tx-12 text-muted">{{ __('Admin') }}</p>
+                        </div>
+                    </div>
+                    <ul class="list-unstyled p-1">
+                        <li class="dropdown-item py-2">
+                            <a href="#" class="text-body ms-0">
+                                <i class="me-2 icon-md" data-feather="user"></i>
+                                <span>{{ __('My Profile') }}</span>
+                            </a>
+                        </li>
+                        <li class="dropdown-item py-2">
+                            <a href="#" class="text-body ms-0">
+                                <i class="me-2 icon-md" data-feather="settings"></i>
+                                <span>{{ __('Settings') }}</span>
+                            </a>
+                        </li>
+                        <li class="dropdown-item py-2">
+                            <a href="#" class="text-body ms-0 text-danger">
+                                <i class="me-2 icon-md text-danger" data-feather="log-out"></i>
+                                <span>{{ __('Logout') }}</span>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </li>
+        </ul>
     </div>
 </nav>
