@@ -4,12 +4,12 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use App\Models\User;
+use App\Models\Hospital;
 
-class Role extends Model
+class HospitalType extends Model
 {
     use HasFactory;
-    protected $table = 'roles';
+    protected $table = 'hospital_types';
 
     /**
      * The attributes that are mass assignable.
@@ -20,8 +20,8 @@ class Role extends Model
         'slug',
     ];
 
-    public function users()
+    public function hospitals()
     {
-        return $this->hasMany(User::class);
+        return $this->hasMany(Hospital::class);
     }
 }

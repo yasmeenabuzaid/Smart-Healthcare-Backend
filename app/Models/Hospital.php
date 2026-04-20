@@ -4,16 +4,67 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\SoftDeletes; // استدعاء ميزة الحذف الآمن
+use App\Models\User;
+use App\Models\City;
+use App\Models\HospitalType;
+use App\Models\Department;
+use App\Models\Feedback;
 
 class Hospital extends Model
 {
-    use HasFactory, SoftDeletes; // تفعيل الميزة
+    use HasFactory;
+    protected $table = 'hospitals';
 
+    /**
+     * The attributes that are mass assignable.
+     */
     protected $fillable = [
-        'name', 'slug', 'description', 'logo',
-        'phone', 'emergency_phone', 'email', 'website',
-        'governorate', 'address', 'latitude', 'longitude',
-        'license_number', 'type', 'status', 'admin_notes'
+        'name_ar',
+        'name_en',
+        'slug',
+        'description_ar',
+        'description_en',
+        'logo',
+        'cover_image',
+        'phone',
+        'emergency_phone',
+        'hospital_email',
+        'website_link',
+        'city_id',
+        'address_ar',
+        'address_en',
+        'latitude',
+        'longitude',
+        'license_number',
+        'hospital_type_id',
+        'status',
+        'admin_notes',
+        'user_id',
     ];
+
+    public function owner()
+    {
+        return $this->belongsTo(User::class, 'user_id');
+    }
+
+    public function city()
+    {
+        return $this->belongsTo(City::class, 'city_id');
+    }
+
+    public function type()
+    {
+        return $this->belongsTo(HospitalType::class, 'hospital_type_id');
+    }
+
+    public function departments()
+    {
+        return $this->hasMany(Department::class);
+    }
+
+    public function feedbacks()
+    {
+        return $this->hasMany(Feedback::class);
+    }
 }
+
