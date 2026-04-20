@@ -51,6 +51,7 @@ class DepartmentSeeder extends Seeder
                     'hospital_id' => $hospitalId,
                     'name_ar' => $department['name_ar'],
                     'name_en' => $department['name_en'],
+                    'requires_appointment' => $department['requires_appointment'],
                     'created_at' => now(),
                     'updated_at' => now(),
                 ]);
