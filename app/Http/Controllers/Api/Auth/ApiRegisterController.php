@@ -16,7 +16,7 @@ class ApiRegisterController extends Controller
             'name' => 'required|string|max:255',
             'phone_number' => 'required|string|unique:users,phone_number',
             'national_number' => 'required|string|unique:users,national_number',
-            'password' => 'required|string|min:4', 
+            'password' => 'required|string|min:6', 
         ], [
             'phone_number.unique' => 'Phone number is already in use.',
             'national_number.unique' => 'National number is already registered.'

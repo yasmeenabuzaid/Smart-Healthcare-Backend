@@ -17,7 +17,7 @@ class ApiLoginController extends Controller
     public function requestLogin(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'national_number' => ['required', 'string'],
+            'national_number' => ['required', 'numeric'],
         ]);
 
         if ($validator->fails()) {
@@ -42,7 +42,7 @@ class ApiLoginController extends Controller
     public function verifyLogin(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'national_number' => ['required', 'string'],
+            'national_number' => ['required', 'numeric'],
             'password' => ['required', 'string'], 
         ]);
 
