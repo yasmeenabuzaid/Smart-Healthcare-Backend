@@ -2,11 +2,13 @@
 
 namespace App\Models;
 
-// use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
+use App\Models\Role;
+use App\Models\Hospital;
+use App\Models\Feedback;
 
 class User extends Authenticatable
 {
@@ -17,13 +19,15 @@ class User extends Authenticatable
      *
      * @var array<int, string>
      */
-  protected $fillable = [
-    'name',
-    'password',
-    'phone_number',
-    'national_number',
-    'email', 
-];
+    protected $fillable = [
+        'name',
+        'email', 
+        'phone',
+        'password',
+        'national_number',
+        'email_verified_at',
+        'role_id',
+    ];
 
     /**
      * The attributes that should be hidden for serialization.
@@ -42,13 +46,21 @@ class User extends Authenticatable
      */
     protected $casts = [
         'email_verified_at' => 'datetime',
+        'password' => 'hashed',
     ];
 
+    public function role()
+    {
+        return $this->belongsTo(Role::class, 'role_id');
+    }
 
-    // because we have a one-to-many relationship between users and employee details
-    // shift in another hospital, or even work in multiple hospitals at the same time
-    public function details()
-{
-    return $this->hasMany(EmployeeDetail::class);
-}
+    public function hospitals()
+    {
+        return $this->hasMany(Hospital::class);
+    }
+
+    public function feedbacks()
+    {
+        return $this->hasMany(Feedback::class);
+    }
 }

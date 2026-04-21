@@ -2,14 +2,14 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use App\Models\User;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use App\Models\Hospital;
 
-class Role extends Model
+class City extends Model
 {
     use HasFactory;
-    protected $table = 'roles';
+    protected $table = 'cities';
 
     /**
      * The attributes that are mass assignable.
@@ -17,11 +17,10 @@ class Role extends Model
     protected $fillable = [
         'name_ar',
         'name_en',
-        'slug',
     ];
 
-    public function users()
+    public function hospitals()
     {
-        return $this->hasMany(User::class);
+        return $this->hasMany(Hospital::class);
     }
 }

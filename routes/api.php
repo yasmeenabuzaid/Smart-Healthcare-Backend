@@ -5,6 +5,8 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\Auth\ForgotPasswordController;
 use App\Http\Controllers\Api\Auth\ApiRegisterController;
 use App\Http\Controllers\Api\Auth\ApiLoginController;
+use App\Http\Controllers\Api\HospitalController;
+use App\Http\Controllers\Api\DepartmentController;
 
 /*
 |--------------------------------------------------------------------------
@@ -34,4 +36,15 @@ Route::prefix('app')->group(function () {
         
     });
 
+});
+
+Route::prefix('hospital')->name('hospital.')->middleware('auth:sanctum')->group(function () {
+    Route::get('/types', [HospitalController::class, 'getHospitalTypes'])->name('types');
+    Route::get('/join-request', [HospitalController::class, 'getHospitalJoinRequests'])->name('join-requests.index');
+    Route::get('/', [HospitalController::class, 'getHospitalsByType'])->name('index');
+    Route::get('/{id}', [HospitalController::class, 'getHospitalDetails'])->name('show');
+});
+
+Route::prefix('department')->name('department.')->middleware('auth:sanctum')->group(function () {
+    Route::get('/schedule', [DepartmentController::class, 'getDepartmentSchedule'])->name('schedule');
 });
