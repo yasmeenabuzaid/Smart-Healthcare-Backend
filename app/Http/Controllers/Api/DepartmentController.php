@@ -17,7 +17,7 @@ class DepartmentController extends Controller
 
             $schedules = DepartmentSchedule::select([
                     'id', 'department_id', 'day_of_week', 'start_time', 
-                    'end_time','service_type_ar', 'service_type_en'
+                    'end_time','service_type_ar', 'service_type_en','is_closed'
                 ])
                 ->where('department_id', $departmentId) 
                 ->orderBy('day_of_week')                  
