@@ -14,14 +14,14 @@ class HospitalController extends Controller
     public function getHospitalTypes()
     {     
         try {
-            $cities = Cache::remember('hospital_type_index', now()->addDay(), function () {
+            $types = Cache::remember('hospital_type_index', now()->addDay(), function () {
                 return HospitalType::select(['id', 'name_ar', 'name_en'])->get();
             });
 
             return response()->json([
                 'status' => 'success',
                 'message' => 'Hospital types retrieved successfully',
-                'data' => $cities
+                'data' => $types
             ], 200);
 
         } catch (\Exception $e) {
@@ -66,7 +66,7 @@ class HospitalController extends Controller
         
         } catch (\Exception $e) {
         
-            Log::error('getHospitals failed', [
+            Log::error('getHospitalsByType failed', [
                 'error' => $e->getMessage(),
             ]);
         
