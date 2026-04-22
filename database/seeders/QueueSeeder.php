@@ -17,8 +17,6 @@ class QueueSeeder extends Seeder
 
         $departments = DB::table('departments')->get();
 
-        $queueCounters = [];
-
         foreach ($departments as $department) {
 
             /*
@@ -34,15 +32,24 @@ class QueueSeeder extends Seeder
 
                 foreach ($appointments as $appointment) {
 
-                    $key = $department->id . '_' . $appointment->date;
+                    $exists = DB::table('queues')
+                        ->where('user_id', $appointment->user_id)
+                        ->where('department_id', $department->id)
+                        ->where('date', $appointment->date)
+                        ->exists();
 
-                    if (!isset($queueCounters[$key])) {
-                        $queueCounters[$key] = 1;
-                    } else {
-                        $queueCounters[$key]++;
+                    if ($exists) {
+                        continue;
                     }
 
-                    $queueNumber = $queueCounters[$key];
+                    $lastQueueNumber = DB::table('queues')
+                        ->where('department_id', $department->id)
+                        ->where('date', $appointment->date)
+                        ->max('queue_number');
+                    
+                    $queueNumber = $lastQueueNumber ? $lastQueueNumber + 1 : 1;
+
+                    $keyUnique = $appointment->user_id.'-'.$department->id.'-'.$appointment->date;
 
                     DB::table('queues')->insert([
                         'appointment_id' => $appointment->id,
@@ -54,7 +61,7 @@ class QueueSeeder extends Seeder
                         'expected_time' => Carbon::parse($appointment->date)
                             ->setTime(8, 0)
                             ->addMinutes(($queueNumber - 1) * 10),
-
+                        'date' => $appointment->date,
                         'is_present' => false,
                         'is_called' => false,
                         'is_served' => false,
@@ -76,20 +83,27 @@ class QueueSeeder extends Seeder
             else {
 
                 $queueCount = rand(5, 15);
+                $date = Carbon::today()->toDateString();
 
                 for ($i = 1; $i <= $queueCount; $i++) {
+                    $lastQueueNumber = DB::table('queues')
+                        ->where('department_id', $department->id)
+                        ->where('date', $date)
+                        ->max('queue_number');
+
+                    $queueNumber = $lastQueueNumber ? $lastQueueNumber + 1 : 1;
 
                     DB::table('queues')->insert([
                         'appointment_id' => null,
                         'user_id' => $users->random(),
                         'department_id' => $department->id,
 
-                        'queue_number' => $i,
+                        'queue_number' => $queueNumber,
 
                         'expected_time' => Carbon::today()
                             ->setTime(9, 0)
                             ->addMinutes(($i - 1) * 7),
-
+                        'date' => $date,
                         'is_present' => false,
                         'is_called' => false,
                         'is_served' => false,

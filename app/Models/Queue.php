@@ -27,6 +27,7 @@ class Queue extends Model
         'is_served',
         'called_at',
         'served_at',
+        'date',
     ];
 
     public function user()

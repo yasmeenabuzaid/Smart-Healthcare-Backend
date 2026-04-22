@@ -27,6 +27,10 @@ return new class extends Migration
 
             $table->timestamp('called_at')->nullable();
             $table->timestamp('served_at')->nullable();
+
+            $table->date('date');
+            
+            $table->unique(['department_id', 'date', 'queue_number']);
             $table->timestamps();
         });
     }
