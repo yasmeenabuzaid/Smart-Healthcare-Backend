@@ -24,7 +24,6 @@ class DepartmentScheduleSeeder extends Seeder
                 'end_time' => '15:00:00',
                 'avg_visit_duration' => 10,
                 'max_patients' => 40,
-                'is_active' => true,
                 'is_closed' => false,
             ],
             [
@@ -34,7 +33,6 @@ class DepartmentScheduleSeeder extends Seeder
                 'end_time' => '23:59:59',
                 'avg_visit_duration' => 5,
                 'max_patients' => 999,
-                'is_active' => true,
                 'is_closed' => false,
             ],
             [
@@ -44,7 +42,6 @@ class DepartmentScheduleSeeder extends Seeder
                 'end_time' => '14:00:00',
                 'avg_visit_duration' => 15,
                 'max_patients' => 60,
-                'is_active' => true,
                 'is_closed' => false,
             ],
             [
@@ -54,7 +51,6 @@ class DepartmentScheduleSeeder extends Seeder
                 'end_time' => '00:00:00',
                 'avg_visit_duration' => 0,
                 'max_patients' => 0,
-                'is_active' => false,
                 'is_closed' => true,
             ],
         ];
@@ -77,7 +73,6 @@ class DepartmentScheduleSeeder extends Seeder
                     'avg_visit_duration' => $schedule['avg_visit_duration'],
                     'max_patients' => $schedule['max_patients'],
 
-                    'is_active' => $schedule['is_active'],
                     'is_closed' => $schedule['is_closed'],
 
                     'created_at' => now(),

@@ -50,7 +50,7 @@ class FeedbackSeeder extends Seeder
                 $departmentId = $departmentIds->random();
             }
 
-            DB::table('feedback')->insert([
+            DB::table('feedbacks')->insert([
                 'user_id' => $userIds->random(),
                 'scope' => $scope,
 

@@ -21,6 +21,8 @@ class DatabaseSeeder extends Seeder
             DepartmentSeeder::class,
             DepartmentScheduleSeeder::class,
             FeedbackSeeder::class,
+            AppointmentSeeder::class,
+            QueueSeeder::class,
         ]);
     }
 }
