@@ -27,9 +27,9 @@ class AppointmentController extends Controller
             }
 
             $date = Carbon::parse($request->date);
-            $today = Carbon::today();
+            $today = Carbon::today()->startOfDay();
           
-            if ($date->lt($today)) {
+            if ($date->lessThanOrEqualTo($today)) {
                 return response()->json([
                     'status' => 'error',
                     'message' => 'Cannot book past dates'
