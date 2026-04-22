@@ -47,9 +47,18 @@ class DepartmentController extends Controller
         }
     }
 
-    public function calendar(GetDepartmentCalendarRequest $request, Department $department)
+    public function calendar(GetDepartmentCalendarRequest $request, int $departmentId)
     {     
         try {
+            $exists  = Department::where('id', $departmentId)->exists();
+
+            if (!$exists) {
+                return response()->json([
+                    'status' => 'error',
+                    'message' => 'Department not found'
+                ], 404);
+            }
+            
             $month = Carbon::createFromFormat('Y-m', $request->month);
             $start = $month->copy()->startOfMonth();
             $end   = $month->copy()->endOfMonth();
@@ -60,11 +69,11 @@ class DepartmentController extends Controller
                 $start = $today->copy();
             }
             
-            $schedules = DepartmentSchedule::where('department_id', $department->id)
+            $schedules = DepartmentSchedule::where('department_id', $departmentId)
                 ->get()
                 ->keyBy('day_of_week');
     
-            $appointmentsCount = Appointment::where('department_id', $department->id)
+            $appointmentsCount = Appointment::where('department_id', $departmentId)
                 ->whereBetween('date', [$start, $end])
                 ->selectRaw('date, COUNT(*) as count')
                 ->groupBy('date')

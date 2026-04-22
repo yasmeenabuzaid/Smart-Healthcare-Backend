@@ -7,7 +7,7 @@ use App\Http\Controllers\Api\Auth\ApiRegisterController;
 use App\Http\Controllers\Api\Auth\ApiLoginController;
 use App\Http\Controllers\Api\HospitalController;
 use App\Http\Controllers\Api\DepartmentController;
-use App\Http\Controllers\Api\DepartmentCalendarController;
+use App\Http\Controllers\Api\AppointmentController;
 
 /*
 |--------------------------------------------------------------------------
@@ -48,5 +48,6 @@ Route::prefix('hospital')->name('hospital.')->middleware('auth:sanctum')->group(
 
 Route::prefix('department')->name('department.')->middleware('auth:sanctum')->group(function () {
     Route::get('/schedule', [DepartmentController::class, 'getDepartmentSchedule'])->name('schedule');
-    Route::get('/{department}/calendar', [DepartmentController::class, 'calendar'])->name('calendar');
+    Route::get('/{id}/calendar', [DepartmentController::class, 'calendar'])->name('calendar');
+    Route::post('/{id}/appointments/book', [AppointmentController::class, 'store'])->name('appointments.store');
 });

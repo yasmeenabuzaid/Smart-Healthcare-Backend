@@ -18,7 +18,7 @@ return new class extends Migration
 
             $table->date('date'); 
             $table->time('time')->nullable();
-
+            $table->unique(['user_id', 'department_id', 'date']);            
             $table->timestamps();
         });
     }
