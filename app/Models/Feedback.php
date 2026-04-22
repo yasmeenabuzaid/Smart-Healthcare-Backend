@@ -22,8 +22,6 @@ class Feedback extends Model
         'department_id',
         'type',
         'message',
-        'status',
-        'admin_reply',
         'user_id',
     ];
 

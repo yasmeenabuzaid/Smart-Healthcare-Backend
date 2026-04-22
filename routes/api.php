@@ -9,6 +9,7 @@ use App\Http\Controllers\Api\HospitalController;
 use App\Http\Controllers\Api\DepartmentController;
 use App\Http\Controllers\Api\AppointmentController;
 use App\Http\Controllers\Api\QueueController;
+use App\Http\Controllers\Api\FeedbackController;
 
 /*
 |--------------------------------------------------------------------------
@@ -42,7 +43,6 @@ Route::prefix('app')->group(function () {
 
 Route::prefix('hospital')->name('hospital.')->middleware('auth:sanctum')->group(function () {
     Route::get('/types', [HospitalController::class, 'getHospitalTypes'])->name('types');
-    Route::get('/join-request', [HospitalController::class, 'getHospitalJoinRequests'])->name('join-requests.index');
     Route::get('/', [HospitalController::class, 'getHospitalsByType'])->name('index');
     Route::get('/{id}', [HospitalController::class, 'getHospitalDetails'])->name('show');
 });
@@ -52,4 +52,8 @@ Route::prefix('department')->name('department.')->middleware('auth:sanctum')->gr
     Route::get('/{departmentId}/calendar', [DepartmentController::class, 'calendar'])->name('calendar');
     Route::post('/{departmentId}/appointments/book', [AppointmentController::class, 'store'])->name('appointments.store');
     Route::post('/{departmentId}/queue/book', [QueueController::class, 'store'])->name('queue.store');
+});
+
+Route::prefix('feedback')->name('feedback.')->middleware('auth:sanctum')->group(function () {
+    Route::post('/', [FeedbackController::class, 'store'])->name('store');
 });

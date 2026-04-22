@@ -63,7 +63,7 @@ class QueueController extends Controller
                 ], 422);
             }
 
-            DB::transaction(function () use ($department, $departmentId, $today, $userId, $schedule) {
+            $queue = DB::transaction(function () use ($department, $departmentId, $today, $userId, $schedule) {
 
                 $appointmentId = null;
 
@@ -105,7 +105,7 @@ class QueueController extends Controller
                 $expectedTime = Carbon::parse($today->toDateString() . ' ' . $schedule->start_time)
                     ->addMinutes(($nextQueueNumber - 1) * $schedule->avg_visit_duration);
 
-                Queue::create([
+                return Queue::create([
                     'appointment_id' => $appointmentId,
                     'user_id' => $userId,
                     'department_id' => $departmentId,
@@ -118,7 +118,10 @@ class QueueController extends Controller
             return response()->json([
                 'status' => 'success',
                 'message' => 'Queue booked successfully',
-                'data' => null
+                'data' => [
+                    'queue_number' => $queue->queue_number,
+                    'expected_time' => Carbon::parse($queue->expected_time)->format('h:i A'),
+                ]            
             ]);
 
         } catch (\Exception $e) {
