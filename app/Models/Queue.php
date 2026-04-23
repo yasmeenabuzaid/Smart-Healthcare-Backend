@@ -23,10 +23,15 @@ class Queue extends Model
         'queue_number',
         'expected_time',
         'date',
-        'is_arrived',
+        'status',
         'arrived_at',
-        'is_checked_in',
-        'checked_in_at',
+        'called_at',
+        'done_at',
+        'skipped_at',
+        'is_arrived',
+        'is_called',
+        'is_done',
+        'is_skipped',
     ];
 
     public function user()

@@ -63,10 +63,8 @@ class QueueSeeder extends Seeder
                             ->addMinutes(($queueNumber - 1) * 10),
                         'date' => $appointment->date,
                         'is_arrived' => false,
-                        'is_checked_in' => false,
 
                         'arrived_at' => null,
-                        'checked_in_at' => null,
 
                         'created_at' => now(),
                         'updated_at' => now(),
@@ -104,10 +102,8 @@ class QueueSeeder extends Seeder
                             ->addMinutes(($i - 1) * 7),
                         'date' => $date,
                         'is_arrived' => false,
-                        'is_checked_in' => false,
 
                         'arrived_at' => null,
-                        'checked_in_at' => null,
 
                         'created_at' => now(),
                         'updated_at' => now(),

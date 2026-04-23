@@ -10,9 +10,17 @@ use App\Models\Appointment;
 use App\Models\Queue;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
+use App\Services\QueueService;
 
 class QueueController extends Controller
 {   
+    protected QueueService $queueService;
+
+    public function __construct(QueueService $queueService)
+    {
+        $this->queueService = $queueService;
+    }
+
     public function store(int $departmentId)
     {
         try {
@@ -188,6 +196,7 @@ class QueueController extends Controller
             $queue->update([
                 'is_arrived' => true,
                 'arrived_at' => now(),
+                'status' => 'arrived',
             ]);
     
             return response()->json([
@@ -205,60 +214,6 @@ class QueueController extends Controller
             return response()->json([
                 'status' => 'error',
                 'message' => 'Failed to confirm arrival, please try again later.'
-            ], 500);
-        }
-    }
-
-    public function checkIn(int $queueId)
-    {
-        try {
-            $userId = auth()->id();
-    
-            $queue = Queue::where('id', $queueId)
-                ->where('user_id', $userId)
-                ->first();
-    
-            if (!$queue) {
-                return response()->json([
-                    'status' => 'error',
-                    'message' => 'Queue not found'
-                ], 404);
-            }
-    
-            if ($queue->is_checked_in) {
-                return response()->json([
-                    'status' => 'error',
-                    'message' => 'You already checked in'
-                ], 422);
-            }
-
-            if ($queue->date !== Carbon::today()->toDateString()) {
-                return response()->json([
-                    'status' => 'error',
-                    'message' => 'Check-in can only be confirmed on queue date'
-                ], 422);
-            }
-
-            $queue->update([
-                'is_checked_in' => true,
-                'checked_in_at' => now(),
-            ]);
-    
-            return response()->json([
-                'status' => 'success',
-                'message' => 'Checked in successfully',
-                'data' => null
-            ]);
-    
-        } catch (\Exception $e) {
-    
-            Log::error('QueueController::checkIn failed', [
-                'error' => $e->getMessage()
-            ]);
-    
-            return response()->json([
-                'status' => 'error',
-                'message' => 'Failed to check in, please try again later.'
             ], 500);
         }
     }
@@ -318,6 +273,151 @@ class QueueController extends Controller
                 'status' => 'error',
                 'message' => 'Failed to retrieve queues, please try again later.',
                 'data' => null
+            ], 500);
+        }
+    }
+
+    public function departmentStatus($id)
+    {
+        try {
+            $userId = auth()->id();
+            $today = Carbon::today()->toDateString();
+    
+            $department = Department::where('id', $id)->first();
+
+            if (!$department) {
+                return response()->json([
+                    'status' => 'error',
+                    'message' => 'Department not found'
+                ], 404);
+            }
+
+            $myQueue = Queue::where('department_id', $id)
+                ->where('user_id', $userId)
+                ->where('date', $today)
+                ->first();
+    
+            return response()->json([
+                'status' => 'success',
+                'data' => [
+                    'department_id' => $department->id,
+                    'current_queue_number' => $department->current_queue_number ?? 0,
+                    'my_queue_number' => $myQueue?->queue_number,
+                    'expected_time' => $myQueue?->expected_time
+                        ? Carbon::parse($myQueue->expected_time)->format('h:i A')
+                        : null,
+                    'status' => $myQueue?->status
+                ]
+            ], 200);
+    
+        } catch (\Exception $e) {
+            Log::error('QueueController::departmentStatus failed', [
+                'error' => $e->getMessage()
+            ]);
+
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Failed to retrieve department queue status, please try again later.'
+            ], 500);
+        }
+    }
+
+    public function done($queueId)
+    {
+        try {
+            $queue = Queue::where('id', $queueId)->first();
+
+            if (!$queue) {
+                return response()->json([
+                    'status' => 'error',
+                    'message' => 'Queue not found'
+                ], 404);
+            }
+
+            if ($queue->status === 'done') {
+                return response()->json([
+                    'status' => 'success',
+                    'message' => 'Queue already marked as done',
+                ], 200);
+            }
+
+            if (in_array($queue->status, ['skipped', 'done'])) {
+                return response()->json([
+                    'status' => 'error',
+                    'message' => "Queue already {$queue->status}",
+                ], 409);
+            }
+
+            $queue->update([
+                'status' => 'done',
+                'done_at' => now(),
+                'is_done' => true,
+            ]);
+    
+            $this->queueService->moveToNextQueue($queue->department_id);
+    
+            return response()->json([
+                'status' => 'success',
+                'message' => 'Queue marked as done',
+            ]);
+        } catch (\Exception $e) {
+            Log::error('QueueController::done failed', [
+                'error' => $e->getMessage()
+            ]);
+
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Failed to marked queue as done, please try again later.'
+            ], 500);
+        }
+    }
+
+    public function skip($queueId)
+    {
+        try {
+            $queue = Queue::where('id', $queueId)->first();
+
+            if (!$queue) {
+                return response()->json([
+                    'status' => 'error',
+                    'message' => 'Queue not found'
+                ], 404);
+            }
+
+            if ($queue->status === 'skipped') {
+                return response()->json([
+                    'status' => 'success',
+                    'message' => 'Queue already skipped',
+                ]);
+            }
+
+            if ($queue->status === 'done') {
+                return response()->json([
+                    'status' => 'error',
+                    'message' => 'Cannot skip a completed queue',
+                ], 409);
+            }
+
+            $queue->update([
+                'status' => 'skipped',
+                'skipped_at' => now(),
+                'is_skipped' => true,
+            ]);
+
+            $this->queueService->moveToNextQueue($queue->department_id);
+
+            return response()->json([
+                'status' => 'success',
+                'message' => 'Queue skipped',
+            ]);
+        } catch (\Exception $e) {
+            Log::error('QueueController::skip failed', [
+                'error' => $e->getMessage()
+            ]);
+
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Failed to marked queue as skipped, please try again later.'
             ], 500);
         }
     }

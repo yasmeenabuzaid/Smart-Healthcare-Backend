@@ -23,6 +23,8 @@ class Department extends Model
         'name_ar',
         'name_en',
         'requires_appointment',
+        'current_queue_number',
+        'current_queue_id',
     ];
 
     public function hospital()

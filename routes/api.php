@@ -1,6 +1,5 @@
 <?php
 
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\Auth\ForgotPasswordController;
 use App\Http\Controllers\Api\Auth\ApiRegisterController;
@@ -57,8 +56,10 @@ Route::prefix('feedback')->name('feedback.')->middleware('auth:sanctum')->group(
 
 Route::prefix('queue')->name('queue.')->middleware('auth:sanctum')->group(function () {
     Route::post('/{queueId}/arrive', [QueueController::class, 'arrive'])->name('arrive');
-    Route::post('/{queueId}/check-in', [QueueController::class, 'checkIn'])->name('checkIn');
     Route::get('/today', [QueueController::class, 'myQueuesToday'])->name('today');
+    Route::get('/department/{id}/status', [QueueController::class, 'departmentStatus'])->name('department.status');
+    Route::post('/{queueId}/done', [QueueController::class, 'done'])->name('done');
+    Route::post('/{queueId}/skip', [QueueController::class, 'skip'])->name('skip');
 });
 
 Route::prefix('appointment')->name('appointment.')->middleware('auth:sanctum')->group(function () {
