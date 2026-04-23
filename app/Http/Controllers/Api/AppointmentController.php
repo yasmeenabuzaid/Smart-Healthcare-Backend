@@ -112,4 +112,60 @@ class AppointmentController extends Controller
             };
         }
     }
+
+    public function myAppointments()
+    {
+        try {
+            $userId = auth()->id();
+
+            $appointments = Appointment::select('id', 'department_id', 'date', 'user_id')
+            ->with([
+                'department:id,hospital_id,name_ar,name_en',
+                'department.hospital:id,name_ar,name_en'
+            ])
+            ->where('user_id', $userId)
+            ->orderBy('date')
+            ->get();
+
+            $groupedAppointments = $appointments
+                ->groupBy(function ($appointment) {
+                    return $appointment->department->hospital->id;
+                })
+                ->map(function ($hospitalAppointments) {
+                    $hospital = $hospitalAppointments->first()->department->hospital;
+
+                    return [
+                        'hospital_id' => $hospital->id,
+                        'hospital_name_ar' => $hospital->name_ar,
+                        'hospital_name_en' => $hospital->name_en,
+                        'appointments' => $hospitalAppointments->map(function ($appointment) {
+                            return [
+                                'appointment_id' => $appointment->id,
+                                'department_name_ar' => $appointment->department->name_ar,
+                                'department_name_en' => $appointment->department->name_en,
+                                'date' => $appointment->date,
+                            ];
+                        })->values()
+                    ];
+                })->values();
+
+            return response()->json([
+                'status' => 'success',
+                'message' => 'Appointments retrieved successfully',
+                'data' => $groupedAppointments
+            ]);
+
+        } catch (\Exception $e) {
+
+            Log::error('AppointmentController::myAppointments failed', [
+                'error' => $e->getMessage()
+            ]);
+
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Failed to retrieve appointments',
+                'data' => null
+            ], 500);
+        }
+    }
 }

@@ -63,3 +63,6 @@ Route::prefix('queue')->name('queue.')->middleware('auth:sanctum')->group(functi
     Route::post('/{queueId}/check-in', [QueueController::class, 'checkIn'])->name('checkIn');
 });
 
+Route::prefix('appointment')->name('appointment.')->middleware('auth:sanctum')->group(function () {
+    Route::get('/my', [AppointmentController::class, 'myAppointments'])->name('my');
+});
