@@ -10,7 +10,7 @@ use App\Http\Controllers\Api\DepartmentController;
 use App\Http\Controllers\Api\AppointmentController;
 use App\Http\Controllers\Api\QueueController;
 use App\Http\Controllers\Api\FeedbackController;
-
+use App\Http\Controllers\Api\UserController;
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -30,13 +30,8 @@ Route::prefix('app')->group(function () {
     });
 
     Route::middleware('auth:sanctum')->group(function () {
-        
-        Route::get('/user', function (Request $request) {
-            return $request->user();
-        });
-
         Route::post('/auth/logout', [ApiLoginController::class, 'logout']);
-        
+        Route::get('/me', [UserController::class, 'show']);
     });
 
 });
