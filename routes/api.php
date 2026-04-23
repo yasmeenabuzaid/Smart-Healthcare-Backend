@@ -41,6 +41,12 @@ Route::prefix('app')->group(function () {
 
 });
 
+// we not need token for this route because it's public and used to show hospitals to users without login
+Route::get('/hospital', [HospitalController::class, 'getHospitalsByType'])->name('hospital.index');
+
+// if you find it please put it in the sanctum middleware group because it's for authenticated users only
+Route::post('/feedback', [FeedbackController::class, 'store'])->name('feedback.store');
+
 Route::prefix('hospital')->name('hospital.')->middleware('auth:sanctum')->group(function () {
     Route::get('/types', [HospitalController::class, 'getHospitalTypes'])->name('types');
     Route::get('/', [HospitalController::class, 'getHospitalsByType'])->name('index');

@@ -14,11 +14,11 @@ class ApiRegisterController extends Controller
     {
         $validator = Validator::make($request->all(), [
             'name' => 'required|string|max:255',
-            'phone_number' => 'required|string|unique:users,phone_number',
+            'phone' => 'required|string|unique:users,phone', 
             'national_number' => 'required|string|unique:users,national_number',
-            'password' => 'required|string|min:4', 
+            'password' => 'required|string|min:6', 
         ], [
-            'phone_number.unique' => 'Phone number is already in use.',
+            'phone.unique' => 'Phone number is already in use.', 
             'national_number.unique' => 'National number is already registered.'
         ]);
 
@@ -28,7 +28,8 @@ class ApiRegisterController extends Controller
 
         $user = User::create([
             'name' => $request->name,
-            'phone_number' => $request->phone_number,
+            'phone' => $request->phone, 
+            'role_id' => 4,
             'national_number' => $request->national_number,
             'password' => Hash::make($request->password),
         ]);
@@ -38,7 +39,7 @@ class ApiRegisterController extends Controller
         return response()->json([
             'success' => true,
             'message' => 'Account created successfully',
-            'user' => $user->only('id', 'name', 'national_number', 'phone_number'),
+            'user' => $user->only('id', 'name', 'national_number', 'phone'), 
             'accessToken' => $token,
         ], 201);
     }

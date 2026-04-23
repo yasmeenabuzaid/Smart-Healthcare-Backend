@@ -42,8 +42,7 @@ class FeedbackController extends Controller
 
             return response()->json([
                 'status' => 'error',
-                'message' => 'Failed to submit feedback',
-                'data' => null
+                'message' => 'An error occurred while submitting the request, please try again later.',
             ], 500);
         }
     }
