@@ -57,3 +57,9 @@ Route::prefix('department')->name('department.')->middleware('auth:sanctum')->gr
 Route::prefix('feedback')->name('feedback.')->middleware('auth:sanctum')->group(function () {
     Route::post('/', [FeedbackController::class, 'store'])->name('store');
 });
+
+Route::prefix('queue')->name('queue.')->middleware('auth:sanctum')->group(function () {
+    Route::post('/{queueId}/arrive', [QueueController::class, 'arrive'])->name('arrive');
+    Route::post('/{queueId}/check-in', [QueueController::class, 'checkIn'])->name('checkIn');
+});
+

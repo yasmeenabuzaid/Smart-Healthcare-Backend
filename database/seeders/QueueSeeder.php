@@ -62,12 +62,11 @@ class QueueSeeder extends Seeder
                             ->setTime(8, 0)
                             ->addMinutes(($queueNumber - 1) * 10),
                         'date' => $appointment->date,
-                        'is_present' => false,
-                        'is_called' => false,
-                        'is_served' => false,
+                        'is_arrived' => false,
+                        'is_checked_in' => false,
 
-                        'called_at' => null,
-                        'served_at' => null,
+                        'arrived_at' => null,
+                        'checked_in_at' => null,
 
                         'created_at' => now(),
                         'updated_at' => now(),
@@ -104,12 +103,11 @@ class QueueSeeder extends Seeder
                             ->setTime(9, 0)
                             ->addMinutes(($i - 1) * 7),
                         'date' => $date,
-                        'is_present' => false,
-                        'is_called' => false,
-                        'is_served' => false,
+                        'is_arrived' => false,
+                        'is_checked_in' => false,
 
-                        'called_at' => null,
-                        'served_at' => null,
+                        'arrived_at' => null,
+                        'checked_in_at' => null,
 
                         'created_at' => now(),
                         'updated_at' => now(),

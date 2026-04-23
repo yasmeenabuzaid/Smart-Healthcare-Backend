@@ -154,4 +154,112 @@ class QueueController extends Controller
             };
         }
     }
+
+    public function arrive(int $queueId)
+    {
+        try {
+            $userId = auth()->id();
+    
+            $queue = Queue::where('id', $queueId)
+                ->where('user_id', $userId)
+                ->first();
+    
+            if (!$queue) {
+                return response()->json([
+                    'status' => 'error',
+                    'message' => 'Queue not found'
+                ], 404);
+            }
+    
+            if ($queue->is_arrived) {
+                return response()->json([
+                    'status' => 'error',
+                    'message' => 'Already marked as arrived'
+                ], 422);
+            }
+
+            if ($queue->date !== Carbon::today()->toDateString()) {
+                return response()->json([
+                    'status' => 'error',
+                    'message' => 'Arrival can only be confirmed on queue date'
+                ], 422);
+            }
+
+            $queue->update([
+                'is_arrived' => true,
+                'arrived_at' => now(),
+            ]);
+    
+            return response()->json([
+                'status' => 'success',
+                'message' => 'Arrival confirmed',
+                'data' => null
+            ]);
+    
+        } catch (\Exception $e) {
+    
+            Log::error('QueueController::arrive failed', [
+                'error' => $e->getMessage()
+            ]);
+    
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Failed to confirm arrival'
+            ], 500);
+        }
+    }
+
+    public function checkIn(int $queueId)
+    {
+        try {
+            $userId = auth()->id();
+    
+            $queue = Queue::where('id', $queueId)
+                ->where('user_id', $userId)
+                ->first();
+    
+            if (!$queue) {
+                return response()->json([
+                    'status' => 'error',
+                    'message' => 'Queue not found'
+                ], 404);
+            }
+    
+            if ($queue->is_checked_in) {
+                return response()->json([
+                    'status' => 'error',
+                    'message' => 'You already checked in'
+                ], 422);
+            }
+
+            if ($queue->date !== Carbon::today()->toDateString()) {
+                return response()->json([
+                    'status' => 'error',
+                    'message' => 'Check-in can only be confirmed on queue date'
+                ], 422);
+            }
+
+            $queue->update([
+                'is_checked_in' => true,
+                'checked_in_at' => now(),
+            ]);
+    
+            return response()->json([
+                'status' => 'success',
+                'message' => 'Checked in successfully',
+                'data' => null
+            ]);
+    
+        } catch (\Exception $e) {
+    
+            Log::error('QueueController::checkIn failed', [
+                'error' => $e->getMessage()
+            ]);
+    
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Failed to check in'
+            ], 500);
+        }
+    }
 }

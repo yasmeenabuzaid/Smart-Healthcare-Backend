@@ -22,12 +22,11 @@ class Queue extends Model
         'department_id',
         'queue_number',
         'expected_time',
-        'is_present',
-        'is_called',
-        'is_served',
-        'called_at',
-        'served_at',
         'date',
+        'is_arrived',
+        'arrived_at',
+        'is_checked_in',
+        'checked_in_at',
     ];
 
     public function user()
