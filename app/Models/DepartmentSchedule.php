@@ -23,7 +23,6 @@ class DepartmentSchedule extends Model
         'service_type_en',
         'avg_visit_duration',
         'max_patients',
-        'is_active',
         'is_closed',
     ];
 

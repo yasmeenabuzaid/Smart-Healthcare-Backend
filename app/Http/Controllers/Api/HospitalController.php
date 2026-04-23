@@ -31,7 +31,7 @@ class HospitalController extends Controller
 
             return response()->json([
                 'status' => 'error',
-                'message' => 'Failed to retrieve hospital types',
+                'message' => 'Failed to retrieve hospital types, please try again later.',
                 'data' => null
             ], 500);
         }
@@ -72,7 +72,7 @@ class HospitalController extends Controller
         
             return response()->json([
                 'status' => 'error',
-                'message' => 'Failed to retrieve hospitals',
+                'message' => 'Failed to retrieve hospitals, please try again later.',
                 'data' => null
             ], 500);
         }
@@ -126,37 +126,10 @@ class HospitalController extends Controller
     
             return response()->json([
                 'status' => 'error',
-                'message' => 'Failed to retrieve hospital details',
+                'message' => 'Failed to retrieve hospital details, please try again later.',
                 'data' => null
             ], 500);
         }
     }
 
-    public function getHospitalJoinRequests()
-    {
-        try {
-            $userId = auth()->id();    
-            $hospitalRequests =  Hospital::select(['id', 'name_ar', 'name_en','status', 'admin_notes'])
-                    ->where('user_id', $userId)
-                    ->get();
-    
-            return response()->json([
-                'status' => 'success',
-                'message' => 'Hospital join requests retrieved successfully',
-                'data' => $hospitalRequests
-            ], 200);
-    
-        } catch (\Exception $e) {
-    
-            Log::error('getHospitalJoinRequests failed', [
-                'error' => $e->getMessage(),
-            ]);
-    
-            return response()->json([
-                'status' => 'error',
-                'message' => 'Failed to retrieve hospital join requests',
-                'data' => null
-            ], 500);
-        }
-    }
 }

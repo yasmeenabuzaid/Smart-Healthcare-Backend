@@ -4,7 +4,7 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class HospitalRequest extends FormRequest
+class StoreAppointmentRequest extends FormRequest
 {
     /**
      * Get the validation rules that apply to the request.
@@ -12,7 +12,7 @@ class HospitalRequest extends FormRequest
     public function rules(): array
     {
         return [
-           'type_id' => ['nullable', 'integer', 'exists:hospital_types,id'],
+           'date' => ['required', 'date_format:Y-m-d'],
         ];
     }
 

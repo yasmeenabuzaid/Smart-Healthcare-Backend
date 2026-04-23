@@ -28,7 +28,6 @@ return new class extends Migration
             $table->integer('avg_visit_duration'); 
             $table->integer('max_patients');
 
-            $table->boolean('is_active')->default(true); // to close a full shift
             $table->boolean('is_closed')->default(false);  // for the holiday           
 
             $table->timestamps();

@@ -19,7 +19,6 @@ class FeedbackSeeder extends Seeder
 
         $scopes = ['system', 'hospital', 'department'];
         $types = ['complaint', 'suggestion', 'inquiry'];
-        $statuses = ['pending', 'in_progress', 'resolved'];
 
         $messages = [
             'الخدمة بطيئة جداً',
@@ -50,7 +49,7 @@ class FeedbackSeeder extends Seeder
                 $departmentId = $departmentIds->random();
             }
 
-            DB::table('feedback')->insert([
+            DB::table('feedbacks')->insert([
                 'user_id' => $userIds->random(),
                 'scope' => $scope,
 
@@ -59,12 +58,6 @@ class FeedbackSeeder extends Seeder
 
                 'type' => Arr::random($types),
                 'message' => Arr::random($messages),
-
-                'status' => Arr::random($statuses),
-
-                'admin_reply' => rand(0, 1)
-                    ? 'تمت معالجة الطلب بنجاح'
-                    : null,
 
                 'created_at' => now(),
                 'updated_at' => now(),

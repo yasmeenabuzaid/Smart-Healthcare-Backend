@@ -1,14 +1,15 @@
 <?php
 
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\Auth\ForgotPasswordController;
 use App\Http\Controllers\Api\Auth\ApiRegisterController;
 use App\Http\Controllers\Api\Auth\ApiLoginController;
 use App\Http\Controllers\Api\HospitalController;
 use App\Http\Controllers\Api\DepartmentController;
+use App\Http\Controllers\Api\AppointmentController;
+use App\Http\Controllers\Api\QueueController;
 use App\Http\Controllers\Api\FeedbackController;
-
+use App\Http\Controllers\Api\UserController;
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -28,13 +29,8 @@ Route::prefix('app')->group(function () {
     });
 
     Route::middleware('auth:sanctum')->group(function () {
-        
-        Route::get('/user', function (Request $request) {
-            return $request->user();
-        });
-
         Route::post('/auth/logout', [ApiLoginController::class, 'logout']);
-        
+        Route::get('/me', [UserController::class, 'show']);
     });
 
 });
@@ -42,15 +38,30 @@ Route::prefix('app')->group(function () {
 // we not need token for this route because it's public and used to show hospitals to users without login
 Route::get('/hospital', [HospitalController::class, 'getHospitalsByType'])->name('hospital.index');
 
-// if you find it please put it in the sanctum middleware group because it's for authenticated users only
-Route::post('/feedback', [FeedbackController::class, 'store'])->name('feedback.store');
-
 Route::prefix('hospital')->name('hospital.')->middleware('auth:sanctum')->group(function () {
     Route::get('/types', [HospitalController::class, 'getHospitalTypes'])->name('types');
-    Route::get('/join-request', [HospitalController::class, 'getHospitalJoinRequests'])->name('join-requests.index');
     Route::get('/{id}', [HospitalController::class, 'getHospitalDetails'])->name('show');
 });
 
 Route::prefix('department')->name('department.')->middleware('auth:sanctum')->group(function () {
     Route::get('/schedule', [DepartmentController::class, 'getDepartmentSchedule'])->name('schedule');
+    Route::get('/{departmentId}/calendar', [DepartmentController::class, 'calendar'])->name('calendar');
+    Route::post('/{departmentId}/appointments/book', [AppointmentController::class, 'store'])->name('appointments.store');
+    Route::post('/{departmentId}/queue/book', [QueueController::class, 'store'])->name('queue.store');
+});
+
+Route::prefix('feedback')->name('feedback.')->middleware('auth:sanctum')->group(function () {
+    Route::post('/', [FeedbackController::class, 'store'])->name('store');
+});
+
+Route::prefix('queue')->name('queue.')->middleware('auth:sanctum')->group(function () {
+    Route::post('/{queueId}/arrive', [QueueController::class, 'arrive'])->name('arrive');
+    Route::get('/today', [QueueController::class, 'myQueuesToday'])->name('today');
+    Route::get('/department/{id}/status', [QueueController::class, 'departmentStatus'])->name('department.status');
+    Route::post('/{queueId}/done', [QueueController::class, 'done'])->name('done');
+    Route::post('/{queueId}/skip', [QueueController::class, 'skip'])->name('skip');
+});
+
+Route::prefix('appointment')->name('appointment.')->middleware('auth:sanctum')->group(function () {
+    Route::get('/my', [AppointmentController::class, 'myAppointments'])->name('my');
 });

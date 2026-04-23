@@ -4,25 +4,23 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use App\Models\User;
-use App\Models\Hospital;
 use App\Models\Department;
+use App\Models\User;
+use App\Models\Queue;
 
-class Feedback extends Model
+class Appointment extends Model
 {
     use HasFactory;
-    protected $table = 'feedbacks';
+    protected $table = 'appointments';
 
     /**
      * The attributes that are mass assignable.
      */
     protected $fillable = [
-        'scope',
-        'hospital_id',
-        'department_id',
-        'type',
-        'message',
         'user_id',
+        'department_id',
+        'date',
+        'time',
     ];
 
     public function user()
@@ -30,13 +28,13 @@ class Feedback extends Model
         return $this->belongsTo(User::class, 'user_id');
     }
 
-    public function hospital()
-    {
-        return $this->belongsTo(Hospital::class, 'hospital_id');
-    }
-
     public function department()
     {
         return $this->belongsTo(Department::class, 'department_id');
+    }
+
+    public function queues()
+    {
+        return $this->hasMany(Queue::class);
     }
 }

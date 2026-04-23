@@ -3,7 +3,6 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
-use Modules\Partnership\App\Rules\ValidPhoneNumber;
 
 class DepartmentScheduleRequest extends FormRequest
 {

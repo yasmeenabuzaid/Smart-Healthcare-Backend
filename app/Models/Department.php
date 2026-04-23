@@ -7,6 +7,8 @@ use Illuminate\Database\Eloquent\Model;
 use App\Models\Hospital;
 use App\Models\Feedback;
 use App\Models\DepartmentSchedule;
+use App\Models\Appointment;
+use App\Models\Queue;
 
 class Department extends Model
 {
@@ -21,6 +23,8 @@ class Department extends Model
         'name_ar',
         'name_en',
         'requires_appointment',
+        'current_queue_number',
+        'current_queue_id',
     ];
 
     public function hospital()
@@ -36,5 +40,15 @@ class Department extends Model
     public function schedules()
     {
         return $this->hasMany(DepartmentSchedule::class);
+    }
+
+    public function appointments()
+    {
+        return $this->hasMany(Appointment::class);
+    }
+
+    public function queues()
+    {
+        return $this->hasMany(Queue::class);
     }
 }
