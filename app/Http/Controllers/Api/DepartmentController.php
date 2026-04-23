@@ -41,7 +41,7 @@ class DepartmentController extends Controller
         
             return response()->json([
                 'status' => 'error',
-                'message' => 'Failed to retrieve department schedule',
+                'message' => 'Failed to retrieve department schedule, please try again later.',
                 'data' => null
             ], 500);
         }
@@ -124,7 +124,7 @@ class DepartmentController extends Controller
         
             return response()->json([
                 'status' => 'error',
-                'message' => 'Failed to retrieve department calendar',
+                'message' => 'Failed to retrieve department calendar, please try again later.',
                 'data' => null
             ], 500);
         }

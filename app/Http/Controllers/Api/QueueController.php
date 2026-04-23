@@ -149,7 +149,7 @@ class QueueController extends Controller
 
                 default => response()->json([
                     'status' => 'error',
-                    'message' => 'Failed to book queue'
+                    'message' => 'Failed to book queue, please try again later.'
                 ], 500),
             };
         }
@@ -204,7 +204,7 @@ class QueueController extends Controller
     
             return response()->json([
                 'status' => 'error',
-                'message' => 'Failed to confirm arrival'
+                'message' => 'Failed to confirm arrival, please try again later.'
             ], 500);
         }
     }
@@ -258,7 +258,7 @@ class QueueController extends Controller
     
             return response()->json([
                 'status' => 'error',
-                'message' => 'Failed to check in'
+                'message' => 'Failed to check in, please try again later.'
             ], 500);
         }
     }

@@ -31,7 +31,7 @@ class HospitalController extends Controller
 
             return response()->json([
                 'status' => 'error',
-                'message' => 'Failed to retrieve hospital types',
+                'message' => 'Failed to retrieve hospital types, please try again later.',
                 'data' => null
             ], 500);
         }
@@ -72,7 +72,7 @@ class HospitalController extends Controller
         
             return response()->json([
                 'status' => 'error',
-                'message' => 'Failed to retrieve hospitals',
+                'message' => 'Failed to retrieve hospitals, please try again later.',
                 'data' => null
             ], 500);
         }
@@ -126,7 +126,7 @@ class HospitalController extends Controller
     
             return response()->json([
                 'status' => 'error',
-                'message' => 'Failed to retrieve hospital details',
+                'message' => 'Failed to retrieve hospital details, please try again later.',
                 'data' => null
             ], 500);
         }

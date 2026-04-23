@@ -107,7 +107,7 @@ class AppointmentController extends Controller
     
                 default => response()->json([
                     'status' => 'error',
-                    'message' => 'Failed to booked appointment'
+                    'message' => 'Failed to booked appointment, please try again later.'
                 ], 500),
             };
         }
@@ -163,7 +163,7 @@ class AppointmentController extends Controller
 
             return response()->json([
                 'status' => 'error',
-                'message' => 'Failed to retrieve appointments',
+                'message' => 'Failed to retrieve appointments, please try again later.',
                 'data' => null
             ], 500);
         }
