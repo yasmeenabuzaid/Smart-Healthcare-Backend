@@ -124,6 +124,7 @@ class AppointmentController extends Controller
                 'department.hospital:id,name_ar,name_en'
             ])
             ->where('user_id', $userId)
+            ->whereDate('date', '>=', Carbon::today())
             ->orderBy('date')
             ->get();
 

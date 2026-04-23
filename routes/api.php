@@ -63,6 +63,7 @@ Route::prefix('feedback')->name('feedback.')->middleware('auth:sanctum')->group(
 Route::prefix('queue')->name('queue.')->middleware('auth:sanctum')->group(function () {
     Route::post('/{queueId}/arrive', [QueueController::class, 'arrive'])->name('arrive');
     Route::post('/{queueId}/check-in', [QueueController::class, 'checkIn'])->name('checkIn');
+    Route::get('/today', [QueueController::class, 'myQueuesToday'])->name('today');
 });
 
 Route::prefix('appointment')->name('appointment.')->middleware('auth:sanctum')->group(function () {

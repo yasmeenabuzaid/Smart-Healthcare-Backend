@@ -262,4 +262,63 @@ class QueueController extends Controller
             ], 500);
         }
     }
+
+    public function myQueuesToday()
+    {
+        try {
+            $userId = auth()->id();
+            $today = Carbon::today()->toDateString();
+
+            $queues = Queue::select('id', 'department_id', 'date', 'user_id', 'expected_time', 'queue_number')
+            ->with([
+                'department:id,hospital_id,name_ar,name_en',
+                'department.hospital:id,name_ar,name_en'
+            ])
+            ->where('user_id', $userId)
+            ->where('date', $today)
+            ->orderBy('expected_time')
+            ->get();
+
+            $grouped = $queues
+                ->groupBy(function ($queue) {
+                    return $queue->department->hospital->id;
+                })
+                ->map(function ($hospitalQueues) {
+                    $hospital = $hospitalQueues->first()->department->hospital;
+
+                    return [
+                        'hospital_id' => $hospital->id,
+                        'hospital_name_ar' => $hospital->name_ar,
+                        'hospital_name_en' => $hospital->name_en,
+                        'queues' => $hospitalQueues->map(function ($queue) {
+                            return [
+                                'queue_id' => $queue->id,
+                                'department_name_ar' => $queue->department->name_ar,
+                                'department_name_en' => $queue->department->name_en,
+                                'queue_number' => $queue->queue_number,
+                                'expected_time' => Carbon::parse($queue->expected_time)->format('h:i A'),
+                            ];
+                        })->values()
+                    ];
+                })->values();
+
+            return response()->json([
+                'status' => 'success',
+                'message' => 'Today queues retrieved successfully',
+                'data' => $grouped
+            ]);
+
+        } catch (\Exception $e) {
+
+            Log::error('QueueController::todayQueues failed', [
+                'error' => $e->getMessage()
+            ]);
+
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Failed to retrieve queues, please try again later.',
+                'data' => null
+            ], 500);
+        }
+    }
 }
