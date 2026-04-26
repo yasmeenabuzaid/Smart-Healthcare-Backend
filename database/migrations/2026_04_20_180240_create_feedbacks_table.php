@@ -21,10 +21,7 @@ return new class extends Migration
             $table->enum('type', ['complaint', 'suggestion', 'inquiry']);
             
             $table->text('message');
-            
-            $table->enum('status', ['pending', 'in_progress', 'resolved'])->default('pending');
-            
-            $table->text('admin_reply')->nullable();
+
             $table->foreignId('user_id')->constrained('users')->cascadeOnDelete();
 
             $table->timestamps();

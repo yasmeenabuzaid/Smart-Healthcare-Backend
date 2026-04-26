@@ -4,11 +4,6 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use App\Models\User;
-use App\Models\City;
-use App\Models\HospitalType;
-use App\Models\Department;
-use App\Models\Feedback;
 
 class Hospital extends Model
 {
@@ -65,6 +60,11 @@ class Hospital extends Model
     public function feedbacks()
     {
         return $this->hasMany(Feedback::class);
+    }
+
+    public function employees()
+    {
+        return $this->hasMany(Employee::class);
     }
 }
 

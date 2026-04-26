@@ -4,11 +4,6 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use App\Models\Hospital;
-use App\Models\Feedback;
-use App\Models\DepartmentSchedule;
-use App\Models\Appointment;
-use App\Models\Queue;
 
 class Department extends Model
 {
@@ -25,6 +20,7 @@ class Department extends Model
         'requires_appointment',
         'current_queue_number',
         'current_queue_id',
+        'is_active',
     ];
 
     public function hospital()
@@ -50,5 +46,20 @@ class Department extends Model
     public function queues()
     {
         return $this->hasMany(Queue::class);
+    }
+
+    public function currentQueue()
+    {
+        return $this->belongsTo(Queue::class, 'current_queue_id');
+    }
+
+    public function employees()
+    {
+        return $this->belongsToMany(
+            Employee::class,
+            'employee_departments',
+            'department_id',
+            'employee_id'
+        );
     }
 }

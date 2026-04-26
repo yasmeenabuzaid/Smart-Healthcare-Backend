@@ -97,7 +97,16 @@ class HospitalController extends Controller
                     ->with([
                         'city:id,name_ar,name_en', 
                         'type:id,name_ar,name_en', 
-                        'departments:id,name_ar,name_en,requires_appointment,hospital_id'])
+                        'departments' => function ($query) {
+                            $query->select(
+                                'id',
+                                'name_ar',
+                                'name_en',
+                                'requires_appointment',
+                                'hospital_id'
+                            )->where('is_active', true);
+                        }
+                    ])
                     ->where('id', $id)
                     ->where('status', 'approved')
                     ->first();

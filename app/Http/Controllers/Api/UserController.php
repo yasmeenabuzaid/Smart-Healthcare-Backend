@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Log;
+use App\Http\Requests\UpdateProfileRequest;
 
 class UserController extends Controller
 {
@@ -40,6 +41,35 @@ class UserController extends Controller
             return response()->json([
                 'status' => 'error',
                 'message' => 'Failed to retrieve user profile, please try again later.',
+                'data' => null
+            ], 500);
+        }
+    }
+
+    public function updateProfile(UpdateProfileRequest $request)
+    {
+        try {
+           /** @var \App\Models\User $user */
+            $user = auth()->user();
+    
+            $user->update($request->only(['phone', 'email']));
+    
+            return response()->json([
+                'status' => 'success',
+                'message' => 'Profile updated successfully.',
+                'data' => $user->fresh()
+            ], 200);
+    
+        } catch (\Exception $e) {
+    
+            Log::error('UserController::updateProfile failed', [
+                'error' => $e->getMessage(),
+                'user_id' => auth()->id(),
+            ]);
+    
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Failed to update profile, please try again later.',
                 'data' => null
             ], 500);
         }
