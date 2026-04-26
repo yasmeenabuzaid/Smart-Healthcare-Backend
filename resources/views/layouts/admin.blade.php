@@ -19,9 +19,9 @@
     <link rel="stylesheet" href="{{ asset('assets/vendors/flag-icon-css/css/flag-icon.min.css') }}">
 
     @if(app()->getLocale() == 'ar')
-        <link rel="stylesheet" href="{{ asset('assets/css/demo1/style-rtl.css') }}">
+        <link rel="stylesheet" href="{{ asset('assets/css/demo2/style-rtl.css') }}">
     @else
-        <link rel="stylesheet" href="{{ asset('assets/css/demo1/style.css') }}">
+        <link rel="stylesheet" href="{{ asset('assets/css/demo2/style.css') }}">
     @endif
 
     <link rel="shortcut icon" href="{{ asset('assets/images/favicon.png') }}" />

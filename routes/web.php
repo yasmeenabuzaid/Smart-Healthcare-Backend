@@ -17,7 +17,7 @@ use App\Http\Controllers\Admin\HospitalRequestController;
 use App\Http\Controllers\Admin\HospitalController;
 use App\Http\Controllers\Admin\InsuranceController;
 use App\Http\Controllers\Admin\Auth\LoginController;
-
+use App\Http\Controllers\Admin\DepartmentController as AdminDepartmentController;
 Route::prefix('admin/insurance')->name('admin.insurance.')->group(function () {
     Route::get('/', [InsuranceController::class, 'index'])->name('index');
     Route::get('/fetch', [InsuranceController::class, 'fetch'])->name('fetch');
@@ -50,7 +50,7 @@ Route::prefix('admin/auth')->name('admin.auth.')->group(function () {
 });
 Route::get('/', function () {
     return view('welcome');
-}); 
+});
 Route::get('/dashboard', function () {
     return view('dashboard');
 })->name('dashboard');
@@ -63,3 +63,27 @@ Route::get('/lang/{locale}', function ($locale) {
 })->name('lang.switch');
 
 
+Route::post('/logout', function (Request $request) {
+    Auth::logout();
+    $request.session()->invalidate();
+    $request.session()->regenerateToken();
+    return redirect('/');
+})->name('logout');
+use App\Http\Controllers\Admin\ComplaintController;
+
+// مسار صفحة الشكاوى والاقتراحات
+Route::get('/admin/complaints', [ComplaintController::class, 'index'])->name('admin.complaints.index');
+
+
+// مسارات إدارة الأقسام من قبل الإدارة
+Route::get('/admin/departments', [AdminDepartmentController::class, 'index'])->name('admin.departments.index');
+Route::post('/admin/departments', [AdminDepartmentController::class, 'store'])->name('admin.departments.store');
+use App\Http\Controllers\Admin\DepartmentScheduleController;
+
+// مسارات إدارة الدوام والطوابير للأقسام
+Route::prefix('admin/departments/{id}')->name('admin.departments.')->group(function () {
+    Route::get('/schedule', [DepartmentScheduleController::class, 'schedule'])->name('schedule');
+    Route::post('/schedule', [DepartmentScheduleController::class, 'storeSchedule'])->name('schedule.store');
+
+    Route::get('/queue', [DepartmentScheduleController::class, 'queue'])->name('queue');
+});
