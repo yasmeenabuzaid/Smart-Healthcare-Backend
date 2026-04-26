@@ -15,11 +15,18 @@
         <ul class="navbar-nav">
             <li class="nav-item dropdown">
                 <a class="nav-link dropdown-toggle" href="#" id="languageDropdown" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                    <i class="flag-icon flag-icon-{{ app()->getLocale() == 'ar' ? 'jo' : 'us' }} mt-1" title="{{ app()->getLocale() == 'ar' ? 'عربي' : 'English' }}"></i> <span class="ms-1 me-1 d-none d-md-inline-block">{{ app()->getLocale() == 'ar' ? 'عربي' : 'English' }}</span>
+                    <i class="flag-icon flag-icon-{{ app()->getLocale() == 'ar' ? 'jo' : 'us' }} mt-1" title="{{ app()->getLocale() == 'ar' ? 'عربي' : 'English' }}"></i>
+                    <span class="ms-1 me-1 d-none d-md-inline-block">{{ app()->getLocale() == 'ar' ? 'عربي' : 'English' }}</span>
                 </a>
                 <div class="dropdown-menu" aria-labelledby="languageDropdown">
-                    <a href="{{ route('lang.switch', 'en') }}" class="dropdown-item py-2"><i class="flag-icon flag-icon-us" title="us" id="us"></i> <span class="ms-1"> English </span></a>
-                    <a href="{{ route('lang.switch', 'ar') }}" class="dropdown-item py-2"><i class="flag-icon flag-icon-jo" title="jo" id="jo"></i> <span class="ms-1"> عربي </span></a>
+                    <a href="{{ route('lang.switch', 'en') }}" class="dropdown-item py-2">
+                        <i class="flag-icon flag-icon-us" title="us" id="us"></i>
+                        <span class="ms-1"> English </span>
+                    </a>
+                    <a href="{{ route('lang.switch', 'ar') }}" class="dropdown-item py-2">
+                        <i class="flag-icon flag-icon-jo" title="jo" id="jo"></i>
+                        <span class="ms-1"> عربي </span>
+                    </a>
                 </div>
             </li>
 
@@ -51,10 +58,14 @@
                             </a>
                         </li>
                         <li class="dropdown-item py-2">
-                            <a href="#" class="text-body ms-0 text-danger">
+                            <a href="{{ route('logout') }}" class="text-body ms-0 text-danger"
+                               onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
                                 <i class="me-2 icon-md text-danger" data-feather="log-out"></i>
                                 <span>{{ __('Logout') }}</span>
                             </a>
+                            <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">
+                                @csrf
+                            </form>
                         </li>
                     </ul>
                 </div>
