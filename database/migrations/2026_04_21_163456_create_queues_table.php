@@ -21,15 +21,19 @@ return new class extends Migration
 
             $table->timestamp('expected_time')->nullable(); 
 
-            $table->boolean('is_present')->default(false); 
-            $table->boolean('is_called')->default(false); 
-            $table->boolean('is_served')->default(false); 
-
-            $table->timestamp('called_at')->nullable();
-            $table->timestamp('served_at')->nullable();
-
             $table->date('date');
+            $table->enum('status', ['waiting', 'arrived', 'called', 'done' , 'skipped'])->default('waiting');
             
+            $table->timestamp('arrived_at')->nullable();      
+            $table->timestamp('called_at')->nullable();
+            $table->timestamp('done_at')->nullable();
+            $table->timestamp('skipped_at')->nullable();
+
+            $table->boolean('is_arrived')->default(false);
+            $table->boolean('is_called')->default(false); 
+            $table->boolean('is_done')->default(false);        
+            $table->boolean('is_skipped')->default(false);  
+
             $table->unique(['department_id', 'date', 'queue_number']);
             $table->timestamps();
         });

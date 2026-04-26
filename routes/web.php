@@ -18,17 +18,19 @@ use App\Http\Controllers\Admin\HospitalController;
 use App\Http\Controllers\Admin\InsuranceController;
 use App\Http\Controllers\Admin\Auth\LoginController;
 
-Route::prefix('admin/insurance')->name('admin.insurance.')->group(function () {
-    Route::get('/', [InsuranceController::class, 'index'])->name('index');
-    Route::get('/fetch', [InsuranceController::class, 'fetch'])->name('fetch');
-    Route::get('/{insuranceRequest}', [InsuranceController::class, 'show'])->name('show');
-    Route::post('/{insuranceRequest}/status', [InsuranceController::class, 'updateStatus'])->name('updateStatus');
-});
+// Route::prefix('admin/insurance')->name('admin.insurance.')->group(function () {
+//     Route::get('/', [InsuranceController::class, 'index'])->name('index');
+//     Route::get('/fetch', [InsuranceController::class, 'fetch'])->name('fetch');
+//     Route::get('/{insuranceRequest}', [InsuranceController::class, 'show'])->name('show');
+//     Route::post('/{insuranceRequest}/status', [InsuranceController::class, 'updateStatus'])->name('updateStatus');
+// });
 Route::prefix('admin/hospitals')->name('admin.hospitals.')->group(function () {
     Route::get('/', [HospitalController::class, 'index'])->name('index');
     Route::get('/fetch', [HospitalController::class, 'fetch'])->name('fetch');
     Route::get('/{hospital}', [HospitalController::class, 'show'])->name('show');
     Route::delete('/{hospital}', [HospitalController::class, 'destroy'])->name('destroy');
+    Route::post('/{hospital}/status', [HospitalController::class, 'updateStatus'])
+    ->name('updateStatus');
 });
 Route::prefix('admin/approvals')->name('admin.approvals.')->group(function () {
     Route::get('/', [HospitalRequestController::class, 'index'])->name('index');

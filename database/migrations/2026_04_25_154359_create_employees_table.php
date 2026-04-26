@@ -11,19 +11,15 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('departments', function (Blueprint $table) {
+        Schema::create('employees', function (Blueprint $table) {
             $table->id();
 
+            $table->foreignId('user_id')->constrained('users')->cascadeOnDelete();
             $table->foreignId('hospital_id')->constrained('hospitals')->cascadeOnDelete();
 
-            $table->string('name_ar');
-            $table->string('name_en');
-            $table->boolean('requires_appointment')->default(false);
-            
-            $table->integer('current_queue_number')->nullable();
-            $table->unsignedBigInteger('current_queue_id')->nullable(); 
+            $table->string('job_title_ar')->nullable();
+            $table->string('job_title_en')->nullable();
 
-            $table->boolean('is_active')->default(true);
             $table->timestamps();
         });
     }
@@ -33,6 +29,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('departments');
+        Schema::dropIfExists('employees');
     }
 };

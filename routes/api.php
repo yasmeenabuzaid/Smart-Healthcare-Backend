@@ -31,6 +31,7 @@ Route::prefix('app')->group(function () {
     Route::middleware('auth:sanctum')->group(function () {
         Route::post('/auth/logout', [ApiLoginController::class, 'logout']);
         Route::get('/me', [UserController::class, 'show']);
+        Route::put('/me/update', [UserController::class, 'updateProfile']);
     });
 
 });
