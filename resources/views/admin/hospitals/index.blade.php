@@ -2,243 +2,171 @@
 
 @section('content')
 <style>
-    /* تأثيرات النيون الجذابة المتوافقة مع الدارك مود */
-    .bg-neon-green {
-        background-color: rgba(57, 255, 20, 0.15) !important;
-        color: #39ff14 !important;
-        border: 1px solid #39ff14;
-        box-shadow: 0 0 8px rgba(57, 255, 20, 0.3);
+    .neon-bg { background-color: #0d1117; color: #c9d1d9; }
+    .hospital-card {
+        background: rgba(22, 27, 34, 0.8);
+        border: 1px solid #30363d;
+        border-radius: 12px;
+        transition: all 0.3s ease;
+        cursor: pointer;
     }
-    .btn-neon-blue {
-        background: transparent;
+    .hospital-card:hover {
+        border-color: #00f3ff;
+        box-shadow: 0 0 15px rgba(0, 243, 255, 0.2);
+        transform: translateY(-5px);
+    }
+    .neon-text-primary { color: #00f3ff; }
+    .neon-text-success { color: #39ff14; }
+
+    /* تنسيق المودال */
+    .modal-content.neon-modal {
+        background-color: #161b22;
         border: 1px solid #00f3ff;
-        color: #00f3ff;
-        transition: all 0.3s ease;
+        box-shadow: 0 0 20px rgba(0, 243, 255, 0.2);
+        color: #fff;
     }
-    .btn-neon-blue:hover {
-        background: rgba(0, 243, 255, 0.1);
-        color: #00f3ff;
-        box-shadow: 0 0 12px rgba(0, 243, 255, 0.5);
+    .modal-header { border-bottom: 1px solid #30363d; }
+    .modal-footer { border-top: 1px solid #30363d; }
+    .btn-neon-close {
+        background: transparent; border: 1px solid #ff003c; color: #ff003c; transition: 0.3s;
     }
-    .btn-neon-danger {
-        background: transparent;
-        border: 1px solid #ff003c;
-        color: #ff003c;
-        transition: all 0.3s ease;
-    }
-    .btn-neon-danger:hover {
-        background: rgba(255, 0, 60, 0.1);
-        color: #ff003c;
-        box-shadow: 0 0 12px rgba(255, 0, 60, 0.5);
-    }
-    .table-hover tbody tr:hover {
-        background-color: rgba(0, 243, 255, 0.05);
-    }
+    .btn-neon-close:hover { background: #ff003c; color: #fff; box-shadow: 0 0 10px #ff003c; }
 </style>
 
-<div class="d-flex justify-content-between align-items-center flex-wrap grid-margin">
-    <div>
-        <h4 class="mb-3 mb-md-0 text-uppercase" style="letter-spacing: 1px;">{{ __('Hospital Management') }}</h4>
-    </div>
-</div>
+<div class="container-fluid neon-bg p-4 rounded">
+    <h3 class="mb-4 neon-text-primary fw-bold">{{ __('Hospitals Directory') }}</h3>
 
-<div class="row">
-    <div class="col-md-12 grid-margin stretch-card">
-        <div class="card">
-            <div class="card-body">
-                <div class="row g-3 mb-4">
-                    <div class="col-md-4">
-                        <div class="input-group">
-                            <span class="input-group-text bg-transparent"><i data-feather="search" class="icon-sm"></i></span>
-                            <input type="text" id="searchInput" class="form-control" placeholder="{{ __('Search by name, email, or phone...') }}">
-                        </div>
-                    </div>
-                    <div class="col-md-4">
-                        <select id="typeFilter" class="form-select">
-                            <option value="">{{ __('All Types') }}</option>
-                            <option value="private">{{ __('Private') }}</option>
-                            <option value="public">{{ __('Public') }}</option>
-                            <option value="specialized">{{ __('Specialized') }}</option>
-                        </select>
-                    </div>
-                    <div class="col-md-4">
-                        <select id="statusFilter" class="form-select">
-                            <option value="">{{ __('All Statuses') }}</option>
-                            <option value="approved">{{ __('Approved') }}</option>
-                            <option value="suspended">{{ __('Suspended') }}</option>
-                        </select>
-                    </div>
-                </div>
-
-                <div class="table-responsive">
-                    <table class="table table-hover align-middle">
-                        <thead>
-                            <tr>
-                                <th>{{ __('Hospital Name') }}</th>
-                                <th>{{ __('Contact') }}</th>
-                                <th>{{ __('Type') }}</th>
-                                <th>{{ __('Status') }}</th>
-                                <th>{{ __('Actions') }}</th>
-                            </tr>
-                        </thead>
-                        <tbody id="tableBody">
-                            </tbody>
-                    </table>
-                </div>
-
-                <div class="d-flex justify-content-center mt-4" id="paginationLinks"></div>
-            </div>
+    <div id="hospitalsContainer" class="row g-4">
+        <div class="col-12 text-center" id="loadingSpinner">
+            <div class="spinner-border text-info" role="status"></div>
+            <p class="mt-2">{{ __('Loading hospitals...') }}</p>
         </div>
     </div>
 </div>
 
-<div class="modal fade" id="hospitalDetailsModal" tabindex="-1" aria-labelledby="hospitalDetailsModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-lg modal-dialog-centered">
-        <div class="modal-content border-0" style="box-shadow: 0 0 20px rgba(0, 243, 255, 0.1);">
-            <div class="modal-header border-bottom">
-                <h5 class="modal-title" id="hospitalDetailsModalLabel">{{ __('Hospital Details') }}</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="btn-close"></button>
+<div class="modal fade" id="hospitalDetailsModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content neon-modal">
+            <div class="modal-header">
+                <h5 class="modal-title neon-text-success fw-bold" id="modalHospitalName"></h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <div class="row" id="detailsContent">
+                <div class="text-center mb-3" id="modalLoader">
+                    <div class="spinner-border text-success" role="status"></div>
+                </div>
+                <div id="modalContent" class="d-none">
+                    <div class="row">
+                        <div class="col-md-4 text-center mb-3">
+                            <img id="modalLogo" src="" alt="Logo" class="img-fluid rounded border border-secondary p-1" style="max-height: 150px;">
+                        </div>
+                        <div class="col-md-8">
+                            <p><strong>{{ __('City') }}:</strong> <span id="modalCity"></span></p>
+                            <p><strong>{{ __('Type') }}:</strong> <span id="modalType"></span></p>
+                            <p><strong>{{ __('Phone') }}:</strong> <span id="modalPhone"></span></p>
+                            <p><strong>{{ __('Emergency') }}:</strong> <span id="modalEmergency" class="text-danger"></span></p>
+                            <p><strong>{{ __('Address') }}:</strong> <span id="modalAddress"></span></p>
+                        </div>
                     </div>
+                    <hr class="border-secondary">
+                    <h6 class="neon-text-primary">{{ __('Description') }}</h6>
+                    <p id="modalDescription" class="text-muted"></p>
+                </div>
             </div>
-            <div class="modal-footer border-top">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">{{ __('Close') }}</button>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-neon-close px-4" data-bs-dismiss="modal">{{ __('Close') }}</button>
             </div>
         </div>
     </div>
 </div>
-@endsection
 
-@section('scripts')
 <script>
-    const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
-    const headers = { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': csrfToken, 'Accept': 'application/json' };
-    let currentPage = 1;
+    const locale = "{{ app()->getLocale() }}"; // لمعرفة اللغة الحالية
+    const apiToken = localStorage.getItem('accessToken'); // جلب التوكن من التخزين
 
-    // مصفوفة الترجمة للجافاسكريبت
-    const trans = {
-        private: "{{ __('Private') }}",
-        public: "{{ __('Public') }}",
-        specialized: "{{ __('Specialized') }}",
-        details: "{{ __('Details') }}",
-        delete: "{{ __('Delete') }}",
-        email: "{{ __('Email:') }}",
-        phone: "{{ __('Phone:') }}",
-        address: "{{ __('Address:') }}",
-        gov: "{{ __('Governorate:') }}",
-        license: "{{ __('License Number:') }}",
-        desc: "{{ __('Description:') }}",
-        not_spec: "{{ __('Not specified') }}",
-        confirm_del: "{{ __('Are you sure you want to delete this hospital? It will be moved to the trash (Soft Delete).') }}"
-    };
+    document.addEventListener('DOMContentLoaded', function() {
+        loadHospitals();
+    });
 
-    async function fetchHospitals(page = 1) {
-        currentPage = page;
-        const search = document.getElementById('searchInput').value;
-        const type = document.getElementById('typeFilter').value;
-        const status = document.getElementById('statusFilter').value;
+    async function loadHospitals() {
+        try {
+            // المسار العام لا يحتاج توكن
+            const response = await fetch("{{ url('api/hospital') }}");
+            const result = await response.json();
 
-        const response = await fetch(`{{ route('admin.hospitals.fetch') }}?page=${page}&search=${search}&type=${type}&status=${status}`);
-        const data = await response.json();
+            const container = document.getElementById('hospitalsContainer');
+            container.innerHTML = ''; // تفريغ التحميل
 
-        renderTable(data.data);
-        renderPagination(data);
-    }
+            if(result.status === 'success' && result.data) {
+                const groupedHospitals = result.data;
 
-    function renderTable(hospitals) {
-        const tbody = document.getElementById('tableBody');
-        tbody.innerHTML = '';
+                // التكرار على المدن
+                for (const [cityName, hospitals] of Object.entries(groupedHospitals)) {
+                    // إضافة عنوان المدينة
+                    container.innerHTML += `<div class="col-12 mt-4 mb-2"><h4 class="border-bottom border-secondary pb-2">${cityName}</h4></div>`;
 
-        if(hospitals.length === 0) {
-            tbody.innerHTML = `<tr><td colspan="5" class="text-center py-4 text-muted">{{ __('No matching hospitals found') }}</td></tr>`;
-            return;
-        }
-
-        hospitals.forEach(hospital => {
-            let statusBadge = hospital.status === 'approved' ? 'bg-neon-green' : 'bg-danger text-white';
-            let typeText = hospital.type === 'private' ? trans.private : (hospital.type === 'public' ? trans.public : trans.specialized);
-
-            tbody.innerHTML += `
-                <tr>
-                    <td class="fw-bolder" style="color: #e0e0e0;">${hospital.name}</td>
-                    <td>
-                        <span class="d-block mb-1"><i data-feather="mail" class="icon-sm text-muted me-1"></i> ${hospital.email}</span>
-                        <span class="d-block"><i data-feather="phone" class="icon-sm text-muted me-1"></i> ${hospital.phone}</span>
-                    </td>
-                    <td>${typeText}</td>
-                    <td><span class="badge ${statusBadge} px-2 py-1 rounded-pill">${hospital.status}</span></td>
-                    <td>
-                        <button onclick="showDetails(${hospital.id})" class="btn btn-xs btn-neon-blue me-2">
-                            <i data-feather="eye" class="icon-xs me-1"></i> ${trans.details}
-                        </button>
-                        <button onclick="deleteHospital(${hospital.id})" class="btn btn-xs btn-neon-danger">
-                            <i data-feather="trash-2" class="icon-xs me-1"></i> ${trans.delete}
-                        </button>
-                    </td>
-                </tr>
-            `;
-        });
-
-        // تفعيل أيقونات Feather بعد رسم الجدول
-        if (feather) {
-            feather.replace();
-        }
-    }
-
-    function renderPagination(data) {
-        const paginationLinks = document.getElementById('paginationLinks');
-        paginationLinks.innerHTML = '';
-        data.links.forEach(link => {
-            if(link.url) {
-                let pageNum = new URL(link.url).searchParams.get("page");
-                paginationLinks.innerHTML += `<button onclick="fetchHospitals(${pageNum})" class="btn btn-sm ${link.active ? 'btn-primary' : 'btn-outline-secondary'} mx-1">${link.label}</button>`;
+                    // إضافة المستشفيات التابعة للمدينة
+                    hospitals.forEach(hospital => {
+                        const name = locale === 'ar' ? hospital.name_ar : hospital.name_en;
+                        container.innerHTML += `
+                            <div class="col-md-6 col-lg-4">
+                                <div class="card hospital-card p-3 h-100" onclick="openHospitalDetails(${hospital.id})">
+                                    <div class="d-flex align-items-center mb-2">
+                                        <div class="bg-secondary rounded-circle me-3 ms-3" style="width: 40px; height: 40px;"></div>
+                                        <h5 class="mb-0 fw-bold">${name}</h5>
+                                    </div>
+                                    <p class="text-muted small mb-0 mt-2 text-end text-sm-start"><i class="feather icon-map-pin"></i> {{ __('Click to view details') }}</p>
+                                </div>
+                            </div>
+                        `;
+                    });
+                }
             }
-        });
-    }
-
-    async function showDetails(id) {
-        const response = await fetch(`/admin/hospitals/${id}`);
-        const h = await response.json();
-
-        let typeText = h.type === 'private' ? trans.private : (h.type === 'public' ? trans.public : trans.specialized);
-        let statusBadge = h.status === 'approved' ? 'bg-neon-green' : 'bg-danger text-white';
-
-        document.getElementById('detailsContent').innerHTML = `
-            <div class="col-md-6 mb-4">
-                <h6 class="text-uppercase text-muted mb-2">${h.name}</h6>
-                <p class="mb-1"><strong>${trans.email}</strong> <span class="text-info">${h.email}</span></p>
-                <p class="mb-1"><strong>${trans.phone}</strong> ${h.phone}</p>
-                <p class="mb-1"><strong>${trans.type}</strong> ${typeText}</p>
-            </div>
-            <div class="col-md-6 mb-4">
-                <h6 class="text-uppercase text-muted mb-2">${trans.address}</h6>
-                <p class="mb-1">${h.address}</p>
-                <p class="mb-1"><strong>${trans.gov}</strong> ${h.governorate || trans.not_spec}</p>
-                <p class="mb-1"><strong>${trans.license}</strong> ${h.license_number || trans.not_spec}</p>
-                <p class="mb-1 mt-2"><strong>${trans.status}</strong> <span class="badge ${statusBadge}">${h.status}</span></p>
-            </div>
-            ${h.description ? `<div class="col-12 mt-2"><div class="p-3 rounded" style="background: rgba(255,255,255,0.05);"><strong>${trans.desc}</strong><p class="mb-0 mt-1">${h.description}</p></div></div>` : ''}
-        `;
-
-        new bootstrap.Modal(document.getElementById('hospitalDetailsModal')).show();
-    }
-
-    async function deleteHospital(id) {
-        if(confirm(trans.confirm_del)) {
-            const res = await fetch(`/admin/hospitals/${id}`, {
-                method: 'DELETE',
-                headers: headers
-            });
-            if(res.ok) fetchHospitals(currentPage);
+        } catch (error) {
+            document.getElementById('hospitalsContainer').innerHTML = `<div class="col-12 text-danger text-center">{{ __('Failed to load data.') }}</div>`;
         }
     }
 
-    document.getElementById('searchInput').addEventListener('input', () => fetchHospitals(1));
-    document.getElementById('typeFilter').addEventListener('change', () => fetchHospitals(1));
-    document.getElementById('statusFilter').addEventListener('change', () => fetchHospitals(1));
+    async function openHospitalDetails(id) {
+        // إظهار المودال وحالة التحميل
+        const modal = new bootstrap.Modal(document.getElementById('hospitalDetailsModal'));
+        modal.show();
 
-    document.addEventListener('DOMContentLoaded', () => fetchHospitals(1));
+        document.getElementById('modalLoader').classList.remove('d-none');
+        document.getElementById('modalContent').classList.add('d-none');
+
+        try {
+            // مسار التفاصيل يحتاج توكن لأنك وضعته داخل auth:sanctum
+            const response = await fetch(`{{ url('api/hospital') }}/${id}`, {
+                headers: {
+                    'Authorization': `Bearer ${apiToken}`,
+                    'Accept': 'application/json'
+                }
+            });
+            const result = await response.json();
+
+            if(response.ok && result.status === 'success') {
+                const data = result.data;
+                const isAr = locale === 'ar';
+
+                document.getElementById('modalHospitalName').innerText = isAr ? data.name_ar : data.name_en;
+                document.getElementById('modalLogo').src = data.logo || 'https://via.placeholder.com/150';
+                document.getElementById('modalCity').innerText = data.city ? (isAr ? data.city.name_ar : data.city.name_en) : '-';
+                document.getElementById('modalType').innerText = data.type ? (isAr ? data.type.name_ar : data.type.name_en) : '-';
+                document.getElementById('modalPhone').innerText = data.phone || '-';
+                document.getElementById('modalEmergency').innerText = data.emergency_phone || '-';
+                document.getElementById('modalAddress').innerText = isAr ? data.address_ar : data.address_en;
+                document.getElementById('modalDescription').innerText = isAr ? data.description_ar : data.description_en;
+
+                document.getElementById('modalLoader').classList.add('d-none');
+                document.getElementById('modalContent').classList.remove('d-none');
+            } else {
+                // في حال عدم وجود صلاحية أو توكن
+                document.getElementById('modalLoader').innerHTML = `<p class="text-danger">${result.message || '{{ __('Unauthorized or error occurred.') }}'}</p>`;
+            }
+        } catch (error) {
+            document.getElementById('modalLoader').innerHTML = `<p class="text-danger">{{ __('Failed to fetch details.') }}</p>`;
+        }
+    }
 </script>
 @endsection

@@ -1,81 +1,56 @@
 <?php
 
-namespace App\Http\Controllers\Auth;
+namespace App\Http\Controllers\Admin\Auth;
 
 use App\Http\Controllers\Controller;
 use App\Models\User;
-use Illuminate\Foundation\Auth\RegistersUsers;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Auth;
 
 class RegisterController extends Controller
 {
-    /*
-    |--------------------------------------------------------------------------
-    | Register Controller
-    |--------------------------------------------------------------------------
-    |
-    | This controller handles the registration of new users as well as their
-    | validation and creation. By default this controller uses a trait to
-    | provide this functionality without requiring any additional code.
-    |
-    */
-
-    use RegistersUsers;
-
-    /**
-     * Where to redirect users after registration.
-     *
-     * @var string
-     */
-    protected function redirectTo()
-    {
-        // Redirect all users to the home page after registration
-        return '/';
-    }
-
-
-    /**
-     * Create a new controller instance.
-     *
-     * @return void
-     */
     public function __construct()
     {
         $this->middleware('guest');
     }
 
-    /**
-     * Get a validator for an incoming registration request.
-     *
-     * @param  array  $data
-     * @return \Illuminate\Contracts\Validation\Validator
-     */
-    protected function validator(array $data)
+    // عرض صفحة التسجيل
+    public function showRegistrationForm()
     {
-        return Validator::make($data, [
-            'Fname' => ['required', 'string', 'max:255'],
-            'Lname' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
-            'password' => ['required', 'string', 'min:8', 'confirmed'],
-            'mobile'=> ['required', 'regex:/^(\+?\d{1,3}[- ]?)?\d{10}$/'],
-        ]);
+        return view('register');
     }
 
-    /**
-     * Create a new user instance after a valid registration.
-     *
-     * @param  array  $data
-     * @return \App\Models\User
-     */
-    protected function create(array $data)
+    // معالجة طلب التسجيل
+    public function register(Request $request)
     {
-        return User::create([
-            'Fname' => $data['Fname'],
-            'Lname' => $data['Lname'],
-            'email' => $data['email'],
-            'password' => Hash::make($data['password']),
-            'mobile' => $data['mobile'],
+        // 1. التحقق من صحة البيانات (Validation)
+        $validated = $request->validate([
+            'name'            => ['required', 'string', 'max:255'],
+            'email'           => ['nullable', 'string', 'email', 'max:255', 'unique:users'],
+            'phone'           => ['required', 'string', 'max:20', 'unique:users'],
+            'national_number' => ['required', 'string', 'max:20', 'unique:users'],
+            'password'        => ['required', 'string', 'min:8', 'confirmed'], // يتطلب حقل password_confirmation
+            'role_id'         => ['required', 'integer', 'exists:roles,id', 'not_in:1'], // حماية أمنية: يمنع تسجيل مدير نظام
+        ], [
+            // رسائل خطأ مخصصة (اختياري)
+            'role_id.not_in' => 'لا يمكنك التسجيل بهذه الصلاحية لأسباب أمنية.',
         ]);
+
+        // 2. إنشاء المستخدم وتشفير كلمة المرور
+        $user = User::create([
+            'name'            => $validated['name'],
+            'email'           => $validated['email'],
+            'phone'           => $validated['phone'],
+            'national_number' => $validated['national_number'],
+            'password'        => Hash::make($validated['password']),
+            'role_id'         => $validated['role_id'],
+        ]);
+
+        // 3. تسجيل الدخول تلقائياً بعد التسجيل
+        Auth::login($user);
+
+        // 4. التوجيه بناءً على الصلاحية
+        return redirect()->route('dashboard')->with('success', 'تم إنشاء الحساب بنجاح!');
     }
 }

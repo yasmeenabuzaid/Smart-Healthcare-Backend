@@ -1,59 +1,35 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Http\Request;
 
-/*
-|--------------------------------------------------------------------------
-| Web Routes
-|--------------------------------------------------------------------------
-|
-| Here is where you can register web routes for your application. These
-| routes are loaded by the RouteServiceProvider and all of them will
-| be assigned to the "web" middleware group. Make something great!
-|
-*/
+// ==========================================
+// Controllers
+// ==========================================
+use App\Http\Controllers\Admin\Auth\LoginController;
+use App\Http\Controllers\Admin\Auth\RegisterController;
 use App\Http\Controllers\Admin\EmployeeController;
 use App\Http\Controllers\Admin\HospitalRequestController;
 use App\Http\Controllers\Admin\HospitalController;
 use App\Http\Controllers\Admin\InsuranceController;
-use App\Http\Controllers\Admin\Auth\LoginController;
 use App\Http\Controllers\Admin\DepartmentController as AdminDepartmentController;
-Route::prefix('admin/insurance')->name('admin.insurance.')->group(function () {
-    Route::get('/', [InsuranceController::class, 'index'])->name('index');
-    Route::get('/fetch', [InsuranceController::class, 'fetch'])->name('fetch');
-    Route::get('/{insuranceRequest}', [InsuranceController::class, 'show'])->name('show');
-    Route::post('/{insuranceRequest}/status', [InsuranceController::class, 'updateStatus'])->name('updateStatus');
-});
-Route::prefix('admin/hospitals')->name('admin.hospitals.')->group(function () {
-    Route::get('/', [HospitalController::class, 'index'])->name('index');
-    Route::get('/fetch', [HospitalController::class, 'fetch'])->name('fetch');
-    Route::get('/{hospital}', [HospitalController::class, 'show'])->name('show');
-    Route::delete('/{hospital}', [HospitalController::class, 'destroy'])->name('destroy');
-});
-Route::prefix('admin/approvals')->name('admin.approvals.')->group(function () {
-    Route::get('/', [HospitalRequestController::class, 'index'])->name('index');
-    Route::get('/fetch', [HospitalRequestController::class, 'fetch'])->name('fetch');
-    Route::get('/{hospitalRequest}', [HospitalRequestController::class, 'show'])->name('show');
-    Route::post('/{hospitalRequest}/approve', [HospitalRequestController::class, 'approve'])->name('approve');
-    Route::post('/{hospitalRequest}/reject', [HospitalRequestController::class, 'reject'])->name('reject');
-});
-Route::prefix('admin/employees')->name('admin.employees.')->group(function () {
-    Route::get('/', [EmployeeController::class, 'index'])->name('index');
-    Route::get('/fetch', [EmployeeController::class, 'fetch'])->name('fetch'); // لجلب البيانات بالـ AJAX
-    Route::post('/store', [EmployeeController::class, 'store'])->name('store');
-    Route::delete('/{employee}', [EmployeeController::class, 'destroy'])->name('destroy');
-});
-Route::prefix('admin/auth')->name('admin.auth.')->group(function () {
-    Route::post('/register', [LoginController::class, 'register'])->name('register');
-    Route::post('/login', [LoginController::class, 'login'])->name('login');
-    Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
-});
+use App\Http\Controllers\Admin\ComplaintController;
+use App\Http\Controllers\Admin\DepartmentScheduleController;
+use App\Http\Controllers\Admin\DashboardController;
+use App\Http\Controllers\Admin\HospitalProfileController;
+/*
+|--------------------------------------------------------------------------
+| Web Routes
+|--------------------------------------------------------------------------
+*/
+
+// ==========================================
+// مسارات عامة (Public)
+// ==========================================
 Route::get('/', function () {
     return view('welcome');
 });
-Route::get('/dashboard', function () {
-    return view('dashboard');
-})->name('dashboard');
 
 Route::get('/lang/{locale}', function ($locale) {
     if (in_array($locale, ['ar', 'en'])) {
@@ -63,27 +39,81 @@ Route::get('/lang/{locale}', function ($locale) {
 })->name('lang.switch');
 
 
-Route::post('/logout', function (Request $request) {
-    Auth::logout();
-    $request.session()->invalidate();
-    $request.session()->regenerateToken();
-    return redirect('/');
-})->name('logout');
-use App\Http\Controllers\Admin\ComplaintController;
+// ==========================================
+// مسارات الزوار (الغير مسجلين)
+// ==========================================
+Route::middleware('guest')->group(function () {
+    // تسجيل الدخول
+    Route::get('/login', function () { return view('welcome'); })->name('welcome');
+    Route::post('/login', [LoginController::class, 'login'])->name('admin.auth.login');
 
-// مسار صفحة الشكاوى والاقتراحات
-Route::get('/admin/complaints', [ComplaintController::class, 'index'])->name('admin.complaints.index');
+    // إنشاء حساب
+    Route::get('/register', [RegisterController::class, 'showRegistrationForm'])->name('register');
+    Route::post('/register', [RegisterController::class, 'register'])->name('admin.auth.register');
+});
 
 
-// مسارات إدارة الأقسام من قبل الإدارة
-Route::get('/admin/departments', [AdminDepartmentController::class, 'index'])->name('admin.departments.index');
-Route::post('/admin/departments', [AdminDepartmentController::class, 'store'])->name('admin.departments.store');
-use App\Http\Controllers\Admin\DepartmentScheduleController;
+// ==========================================
+// مسارات المستخدمين المسجلين (Auth)
+// ==========================================
+Route::middleware('auth')->group(function () {
 
-// مسارات إدارة الدوام والطوابير للأقسام
-Route::prefix('admin/departments/{id}')->name('admin.departments.')->group(function () {
-    Route::get('/schedule', [DepartmentScheduleController::class, 'schedule'])->name('schedule');
-    Route::post('/schedule', [DepartmentScheduleController::class, 'storeSchedule'])->name('schedule.store');
+   Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
-    Route::get('/queue', [DepartmentScheduleController::class, 'queue'])->name('queue');
+    // مسار تقديم طلب المستشفى (لأول مرة)
+    Route::post('/hospital/setup', [HospitalProfileController::class, 'store'])->name('hospital.setup.store');
+    Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
+
+    // مسارات الإدارة (Admin)
+    Route::prefix('admin')->name('admin.')->group(function () {
+
+        // الشكاوى والاقتراحات
+        Route::get('/complaints', [ComplaintController::class, 'index'])->name('complaints.index');
+
+        // الموافقات (Approvals)
+        Route::prefix('approvals')->name('approvals.')->group(function () {
+            Route::get('/', [HospitalRequestController::class, 'index'])->name('index');
+            Route::get('/fetch', [HospitalRequestController::class, 'fetch'])->name('fetch');
+            Route::get('/{hospitalRequest}', [HospitalRequestController::class, 'show'])->name('show');
+            Route::post('/{hospitalRequest}/approve', [HospitalRequestController::class, 'approve'])->name('approve');
+            Route::post('/{hospitalRequest}/reject', [HospitalRequestController::class, 'reject'])->name('reject');
+        });
+
+        // المستشفيات (Hospitals)
+        Route::prefix('hospitals')->name('hospitals.')->group(function () {
+            Route::get('/', [HospitalController::class, 'index'])->name('index');
+            Route::get('/fetch', [HospitalController::class, 'fetch'])->name('fetch');
+            Route::get('/{hospital}', [HospitalController::class, 'show'])->name('show');
+            Route::delete('/{hospital}', [HospitalController::class, 'destroy'])->name('destroy');
+        });
+
+        // التأمين (Insurance)
+        Route::prefix('insurance')->name('insurance.')->group(function () {
+            Route::get('/', [InsuranceController::class, 'index'])->name('index');
+            Route::get('/fetch', [InsuranceController::class, 'fetch'])->name('fetch');
+            Route::get('/{insuranceRequest}', [InsuranceController::class, 'show'])->name('show');
+            Route::post('/{insuranceRequest}/status', [InsuranceController::class, 'updateStatus'])->name('updateStatus');
+        });
+
+        // الموظفين (Employees)
+        Route::prefix('employees')->name('employees.')->group(function () {
+            Route::get('/', [EmployeeController::class, 'index'])->name('index');
+            Route::get('/fetch', [EmployeeController::class, 'fetch'])->name('fetch');
+            Route::post('/store', [EmployeeController::class, 'store'])->name('store');
+            Route::delete('/{employee}', [EmployeeController::class, 'destroy'])->name('destroy');
+        });
+
+        // الأقسام والدوام (Departments & Schedules)
+        Route::prefix('departments')->name('departments.')->group(function () {
+            Route::get('/', [AdminDepartmentController::class, 'index'])->name('index');
+            Route::post('/', [AdminDepartmentController::class, 'store'])->name('store');
+
+            Route::prefix('{id}')->group(function () {
+                Route::get('/schedule', [DepartmentScheduleController::class, 'schedule'])->name('schedule');
+                Route::post('/schedule', [DepartmentScheduleController::class, 'storeSchedule'])->name('schedule.store');
+                Route::get('/queue', [DepartmentScheduleController::class, 'queue'])->name('queue');
+            });
+        });
+
+    });
 });
